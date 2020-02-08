@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.android.application'
 apply plugin: 'androidx.navigation.safeargs'
+apply plugin: 'com.google.gms.google-services'
 
 
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.example.visitormanager"
+        applicationId "com.abstractclass.visitormanager"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
@@ -33,5 +34,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'androidx.navigation:navigation-fragment:2.1.0'
     implementation 'androidx.navigation:navigation-ui:2.1.0'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
 
 }
