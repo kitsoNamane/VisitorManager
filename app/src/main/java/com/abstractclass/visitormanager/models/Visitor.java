@@ -2,11 +2,13 @@ package com.abstractclass.visitormanager.models;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
+import androidx.room.Entity;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+@Entity(tableName = "visitor_table")
 public class Visitor implements Serializable {
     @Embedded
     @SerializedName("person")
