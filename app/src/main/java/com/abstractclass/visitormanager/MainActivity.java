@@ -3,6 +3,7 @@ package com.abstractclass.visitormanager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
 
@@ -20,5 +21,6 @@ public class MainActivity extends AppCompatActivity {
         final MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        NavigationUI.setupActionBarWithNavController(this, navController);
     }
 }

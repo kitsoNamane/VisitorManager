@@ -34,7 +34,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/porpose_input"
+        android:id="@+id/purpose_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -43,13 +43,14 @@
         app:layout_constraintTop_toBottomOf="@+id/plate_number_input">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/porpose_text"
+            android:id="@+id/purpose_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="porpose of visit" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:id="@+id/cancel_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,14 +60,17 @@
         app:layout_constraintEnd_toStartOf="@+id/add_btn"
         app:layout_constraintTop_toTopOf="@+id/add_btn" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/add_btn"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
+        android:background="#35E612"
         android:text="Add"
+        app:backgroundTint="#2FD622"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/porpose_input" />
+        app:layout_constraintTop_toBottomOf="@+id/purpose_input" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
