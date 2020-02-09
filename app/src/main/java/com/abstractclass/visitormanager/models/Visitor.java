@@ -7,10 +7,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Visitor extends Person implements Serializable {
+public class Visitor implements Serializable {
     @Embedded
     @SerializedName("person")
-    public Person person;
+    private Person person;
 
     @ColumnInfo(name = "purpose")
     @SerializedName("purpose")
@@ -46,5 +46,13 @@ public class Visitor extends Person implements Serializable {
 
     public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 }

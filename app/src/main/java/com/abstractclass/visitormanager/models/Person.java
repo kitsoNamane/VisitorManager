@@ -2,6 +2,7 @@ package com.abstractclass.visitormanager.models;
 
 import androidx.room.ColumnInfo;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ public class Person implements Serializable {
 
     @ColumnInfo(name = "first_name")
     @SerializedName("first_name")
+    @Expose
     private String firstName;
 
     @ColumnInfo(name = "last_name")
