@@ -4,10 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.camera.core.CameraX;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.Preview;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -36,6 +41,7 @@ public class TakeIdPhotoFragment extends Fragment {
 
     VisitorViewModel visitorViewModel;
     Visitor visitor;
+    private ImageCapture imageCapture;
 
     public TakeIdPhotoFragment() {
         // Required empty public constructor
@@ -112,6 +118,9 @@ public class TakeIdPhotoFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
+
     }
 
     @Override
@@ -119,6 +128,19 @@ public class TakeIdPhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_take_id_photo, container, false);
+
+        Preview preview = new Preview.Builder().build();
+        ImageCapture imageCapture =
+                new ImageCapture.Builder().build();
+
+        TextureView textureView = view.findViewById(R.id.camera_view);
+
+        preview.setOnPreviewOutputUpdateListener(
+                previewOutput -> {
+                    textureView.setSurfaceTexture(previewOutput.getSurfaceTexture());
+                });
+
+        CameraX.bindToLifecycle(getViewLifecycleOwner(), preview, imageCapture);
         return view;
     }
 
