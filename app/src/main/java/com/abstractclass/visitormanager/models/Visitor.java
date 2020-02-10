@@ -3,6 +3,7 @@ package com.abstractclass.visitormanager.models;
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -10,6 +11,9 @@ import java.io.Serializable;
 
 @Entity(tableName = "visitor_table")
 public class Visitor implements Serializable {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
     @Embedded
     @SerializedName("person")
     private Person person;
@@ -56,5 +60,13 @@ public class Visitor implements Serializable {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

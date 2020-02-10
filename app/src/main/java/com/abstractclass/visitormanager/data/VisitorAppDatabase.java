@@ -34,6 +34,4 @@ public abstract class VisitorAppDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
-
-
 }

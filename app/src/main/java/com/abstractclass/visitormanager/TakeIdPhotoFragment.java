@@ -5,10 +5,16 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.abstractclass.visitormanager.models.Person;
+import com.abstractclass.visitormanager.models.Visitor;
+import com.abstractclass.visitormanager.view_models.VisitorViewModel;
 
 
 /**
@@ -28,6 +34,8 @@ public class TakeIdPhotoFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    VisitorViewModel visitorViewModel;
+    Visitor visitor;
 
     public TakeIdPhotoFragment() {
         // Required empty public constructor
@@ -49,6 +57,52 @@ public class TakeIdPhotoFragment extends Fragment {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle saveInstanceState) {
+        super.onActivityCreated(saveInstanceState);
+        visitorViewModel = new ViewModelProvider(requireActivity()).get(VisitorViewModel.class);
+
+        /** We can observe the ViewModel for changes, for example:
+         *  We can send emails notifications after every 2 visitors entry
+         */
+        visitorViewModel.getVisitors().observe(getViewLifecycleOwner(), visitors -> {
+           if(visitors.size() % 2 == 0) {
+               Toast.makeText(this.getContext(),
+                       "2 more visors added, total visitors : "+visitors.size(),
+                       Toast.LENGTH_LONG).show();
+           }
+        });
+
+        /** add a visitor using the ViewModel
+         *  we first initialize our data classes
+         */
+
+        visitor = new Visitor();
+        Person person = new Person();
+        person.setFirstName("kitso");
+        person.setLastName("Namane");
+        person.setSex("male");
+
+        // add person to visitor
+        visitor.setPerson(person);
+        visitor.setPurpose("Code Exploration");
+
+        // add visitor to database
+        visitorViewModel.addVisitor(visitor);
+
+
+        person.setFirstName("Olebogeng");
+        person.setLastName("Mbedzi");
+        person.setSex("male");
+
+        visitor.setPerson(person);
+        visitor.setPurpose("Business Dealings");
+        visitorViewModel.addVisitor(visitor);
+
+        // NB: you have to add a visitor to the database before we can resuse the same visitor container
+        // to add a second visitor;
     }
 
     @Override
