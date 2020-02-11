@@ -1,6 +1,7 @@
 package com.abstractclass.visitormanager.repository;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
@@ -18,8 +19,8 @@ public class VisitorRepository {
     // dependency. This adds complexity and much more code, and this sample is not about testing.
     // See the BasicSample in the android-architecture-components repository at
     // https://github.com/googlesamples
-    public VisitorRepository(Application application) {
-        VisitorAppDatabase db = VisitorAppDatabase.getDatabase(application);
+    public VisitorRepository(Context context) {
+        VisitorAppDatabase db = VisitorAppDatabase.getDatabase(context);
         visitorDao = db.visitorDao();
         visitors = visitorDao.getAllVisitors();
     }
