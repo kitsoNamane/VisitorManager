@@ -69,6 +69,7 @@ public class TakeIdPhotoFragment extends Fragment {
     public void onActivityCreated(Bundle saveInstanceState) {
         super.onActivityCreated(saveInstanceState);
         visitorViewModel = new ViewModelProvider(requireActivity()).get(VisitorViewModel.class);
+        visitorViewModel.init(this.getContext());
 
         /** We can observe the ViewModel for changes, for example:
          *  We can send emails notifications after every 2 visitors entry

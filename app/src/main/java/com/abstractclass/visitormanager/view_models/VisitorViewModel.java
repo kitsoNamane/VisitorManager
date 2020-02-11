@@ -1,6 +1,7 @@
 package com.abstractclass.visitormanager.view_models;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -16,8 +17,8 @@ public class VisitorViewModel extends ViewModel {
 
     private LiveData<List<Visitor>> visitors;
 
-    public VisitorViewModel(Application application) {
-        visitorRepository = new VisitorRepository(application);
+    public void init(Context context) {
+        visitorRepository = new VisitorRepository(context);
     }
 
     public LiveData<List<Visitor>> getVisitors() {
