@@ -3,6 +3,7 @@ package com.abstractclass.visitormanager.google;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -85,6 +86,7 @@ public class TextRecognition
         for (FirebaseVisionText.TextBlock block: result.getResult().getTextBlocks())
         {
             String blockText = block.getText();
+            Log.d("Block text:", blockText);
         }
 
         return person;
