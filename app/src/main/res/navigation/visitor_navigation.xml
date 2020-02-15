@@ -14,6 +14,9 @@
             android:id="@+id/actionIdPhoto"
             app:destination="@id/takeIdPhotoFragment"
             app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_photoIdFragment"
+            app:destination="@id/photoIdFragment" />
     </fragment>
     <fragment
         android:id="@+id/carInfoFragment"
@@ -33,5 +36,13 @@
             android:id="@+id/actionCarInfo"
             app:destination="@id/carInfoFragment"
             app:launchSingleTop="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoIdFragment"
+        android:name="com.abstractclass.visitormanager.PhotoIdFragment"
+        android:label="PhotoIdFragment" >
+        <action
+            android:id="@+id/action_photoIdFragment_to_carInfoFragment"
+            app:destination="@id/carInfoFragment" />
     </fragment>
 </navigation>

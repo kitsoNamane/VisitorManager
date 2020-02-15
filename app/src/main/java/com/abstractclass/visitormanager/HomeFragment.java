@@ -76,7 +76,7 @@ public class HomeFragment extends Fragment {
         takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.navController.navigate(HomeFragmentDirections.actionIdPhoto());
+                MainActivity.navController.navigate(HomeFragmentDirections.actionHomeFragmentToPhotoIdFragment());
             }
         });
         return view;

@@ -1,17 +1,19 @@
 package com.abstractclass.visitormanager;
 
-import android.content.Context;
-import android.net.Uri;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import androidx.camera.core.CameraX;
-import androidx.camera.core.ImageCapture;
+import androidx.annotation.NonNull;
 import androidx.camera.core.Preview;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Rational;
+import android.util.Size;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,9 @@ import android.widget.Toast;
 import com.abstractclass.visitormanager.models.Person;
 import com.abstractclass.visitormanager.models.Visitor;
 import com.abstractclass.visitormanager.view_models.VisitorViewModel;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -41,7 +46,15 @@ public class TakeIdPhotoFragment extends Fragment {
 
     VisitorViewModel visitorViewModel;
     Visitor visitor;
-    private ImageCapture imageCapture;
+    TextureView textureView;
+    Preview preview;
+
+    private int REQUEST_CODE_PERMISSIONS = 101;
+    private String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA",
+            "android.permission.WRITE_EXTERNAL_STORAGE"};
+
+    private Executor executor = Executors.newSingleThreadExecutor();
+
 
     public TakeIdPhotoFragment() {
         // Required empty public constructor
@@ -119,9 +132,6 @@ public class TakeIdPhotoFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
-
     }
 
     @Override
@@ -129,20 +139,62 @@ public class TakeIdPhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_take_id_photo, container, false);
+        textureView = view.findViewById(R.id.view_finder);
+        if(allPermissionGranted()){
+            textureView.post(()->startCamera());
+        }
+        else{
+            ActivityCompat.requestPermissions(this.getActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+        }
 
-        Preview preview = new Preview.Builder().build();
-        ImageCapture imageCapture =
-                new ImageCapture.Builder().build();
-
-        TextureView textureView = view.findViewById(R.id.camera_view);
-
-        preview.setOnPreviewOutputUpdateListener(
-                previewOutput -> {
-                    textureView.setSurfaceTexture(previewOutput.getSurfaceTexture());
-                });
-
-        CameraX.bindToLifecycle(getViewLifecycleOwner(), preview, imageCapture);
+        textureView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                updateTransform();
+            }
+        });
+        //TextureView textureView = view.findViewById(R.id.camera_view);
         return view;
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if(requestCode == REQUEST_CODE_PERMISSIONS){
+            if(allPermissionGranted()){
+                textureView.post(()->startCamera());
+            } else{
+                Toast.makeText(this.getContext(), "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private boolean allPermissionGranted() {
+
+        for(String permission : REQUIRED_PERMISSIONS){
+
+            if(ContextCompat.checkSelfPermission(this.getContext(), permission) != PackageManager.PERMISSION_GRANTED){
+
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void startCamera() {
+        /**
+        Rational aspectRatio = new Rational(textureView.getWidth(), textureView.getHeight());
+        Size screen = new Size(textureView.getWidth(), textureView.getHeight());
+
+        Preview preview = new Preview.Builder().setTargetResolution(screen).build();
+        preview.setSurfaceProvider(preview.getSurfaceProvider());
+         */
+
+    }
+
+    private void updateTransform() {
+
+
+    }
 }
