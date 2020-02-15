@@ -92,6 +92,8 @@ class PhotoIdFragment : Fragment() {
                             Log.d("CameraXApp", msg)
                             viewFinder.post {
                                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                                val actionPhoto = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(file.absolutePath)
+                                MainActivity.navController.navigate(actionPhoto)
                             }
                         }
                     })
