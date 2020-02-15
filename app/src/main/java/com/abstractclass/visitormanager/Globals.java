@@ -11,5 +11,5 @@ public class Globals {
 
 
     // This is an array of all the permission specified in the manifest.
-    //pulic val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA);
+    //public static String REQUIRED_PERMISSIONS = Manifest.permission.CAMERA;
 }

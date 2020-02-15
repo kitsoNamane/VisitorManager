@@ -2,15 +2,21 @@ package com.abstractclass.visitormanager.models;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Visitor extends Person implements Serializable {
+@Entity(tableName = "visitor_table")
+public class Visitor implements Serializable {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
     @Embedded
     @SerializedName("person")
-    public Person person;
+    private Person person;
 
     @ColumnInfo(name = "purpose")
     @SerializedName("purpose")
@@ -46,5 +52,21 @@ public class Visitor extends Person implements Serializable {
 
     public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

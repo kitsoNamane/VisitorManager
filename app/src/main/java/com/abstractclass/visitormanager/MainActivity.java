@@ -22,5 +22,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         NavigationUI.setupActionBarWithNavController(this, navController);
+
     }
 }
