@@ -59,6 +59,7 @@ public class Person implements Serializable {
 
     public void setNationalId(String nationalId) {
         this.nationalId = nationalId;
+        this.setGender(Integer.parseInt(nationalId.substring(4,5)));
     }
 
     public String getPassportNumber() {
@@ -73,8 +74,8 @@ public class Person implements Serializable {
         return sex;
     }
 
-    public void setGender(int gender) {
-        switch(gender) {
+    public void setGender(int fifth_char) {
+        switch(fifth_char) {
             case 0:
                 this.setSex("female");
                 break;
