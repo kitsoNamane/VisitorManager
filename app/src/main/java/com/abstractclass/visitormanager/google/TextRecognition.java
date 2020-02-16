@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 
 import com.abstractclass.visitormanager.controller.MRTD;
 import com.abstractclass.visitormanager.models.Person;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -27,7 +26,7 @@ public class TextRecognition
     private FirebaseVisionImage firebaseVisionImage;
     private Context context;
     private Uri image_uri;
-    Person person;
+    private Person person;
     private FirebaseVisionTextRecognizer detector;
 
 

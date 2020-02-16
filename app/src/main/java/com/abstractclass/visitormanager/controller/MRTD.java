@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.abstractclass.visitormanager.models.Person;
 
+import org.apache.commons.codec.binary.StringUtils;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -45,6 +47,7 @@ public class MRTD
                 case 1:
                     break;
                 case 2:
+                    person.setLastName(block.substring(0, block.indexOf("<<")));
                     break;
             }
 
