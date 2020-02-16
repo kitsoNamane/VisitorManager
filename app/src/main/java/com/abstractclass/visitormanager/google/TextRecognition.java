@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.abstractclass.visitormanager.models.Person;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -51,10 +52,12 @@ public class TextRecognition
         return true;
     }
 
-    private Task<FirebaseVisionText> getVisionText()
+    public void recognizeText()
     {
+        String test = "cows";
         this.createFirebaseVisionImage();
-        return  detector.processImage(this.firebaseVisionImage)
+        Task<FirebaseVisionText> result =
+          detector.processImage(this.firebaseVisionImage)
                 .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                     @Override
                     public void onSuccess(FirebaseVisionText firebaseVisionText)
@@ -62,35 +65,31 @@ public class TextRecognition
                         // Task completed successfully
                         // ...
 
+
+                        for (FirebaseVisionText.TextBlock block: firebaseVisionText.getTextBlocks())
+                        {
+                            String blockText = block.getText();
+                            Log.d("Block text:", blockText);
+                        }
+                        Log.d("Block text", "Completed Analyzing image");
                     }
                 })
                 .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Task failed with an exception
-                                // ...
-                                e.printStackTrace();
-                            }
-                        });
-
-
+                    new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Task failed with an exception
+                            // ...
+                            e.printStackTrace();
+                        }
+                }
+        );
 
     }
 
     public Person getPersonData()
     {
         Person person = null;
-        Task<FirebaseVisionText> result = this.getVisionText();
-
-        String visionTextTask = result.getResult().getText();
-
-        for (FirebaseVisionText.TextBlock block: result.getResult().getTextBlocks())
-        {
-            String blockText = block.getText();
-            Log.d("Block text:", blockText);
-        }
-
         return person;
     }
 

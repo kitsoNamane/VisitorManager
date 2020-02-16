@@ -49,6 +49,7 @@ class IdDecodeInfoFragment : Fragment() {
         imageScanResult = view.findViewById(R.id.scan_results)
         Toast.makeText(requireContext(), imagePath, Toast.LENGTH_LONG).show()
         Glide.with(this).load(imageUri).into(view.findViewById(R.id.scan_results))
+
         return view;
     }
 

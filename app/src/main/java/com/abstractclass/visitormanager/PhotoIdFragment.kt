@@ -1,7 +1,6 @@
 package com.abstractclass.visitormanager
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.net.Uri
@@ -15,8 +14,10 @@ import android.widget.Toast
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.abstractclass.visitormanager.google.TextRecognition
 import java.io.File
 import java.util.concurrent.Executors
+import org.jmrtd.PassportService
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,6 +44,8 @@ class PhotoIdFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var textRecognition: TextRecognition? = null
+    private var passportService: PassportService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,11 +103,14 @@ class PhotoIdFragment : Fragment() {
 
                         override fun onImageSaved(file: File) {
                             val msg = "Photo capture succeeded: ${file.absolutePath}"
+                            textRecognition = TextRecognition(requireContext(), Uri.fromFile(file))
+                            textRecognition?.recognizeText()
+
                             Log.d("CameraXApp", msg)
                             viewFinder.post {
                                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                                val actionPhoto = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(file.absolutePath)
-                                MainActivity.navController.navigate(actionPhoto)
+                                //val actionPhoto = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(file.absolutePath)
+                                //MainActivity.navController.navigate(actionPhoto)
                             }
                         }
                     })
