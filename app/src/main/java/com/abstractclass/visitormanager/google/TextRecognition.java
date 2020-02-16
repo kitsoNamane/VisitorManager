@@ -27,6 +27,7 @@ public class TextRecognition
     private FirebaseVisionImage firebaseVisionImage;
     private Context context;
     private Uri image_uri;
+    Person person;
     private FirebaseVisionTextRecognizer detector;
 
 
@@ -72,6 +73,9 @@ public class TextRecognition
                             String blockText = block.getText();
                             if(MRTD.isValidTD1(blockText)) {
                                 Log.d("Block text:", blockText);
+                                MRTD mrtd = new MRTD(blockText);
+                                person = mrtd.getPerson();
+                                Log.d("Person Id", person.getNationalId());
                             } else {
                                 Log.d("Block test", "Invalid : "+blockText);
                             }
@@ -92,10 +96,9 @@ public class TextRecognition
 
     }
 
-    public Person getPersonData()
+    public Person getPerson()
     {
-        Person person = null;
-        return person;
+       return this.person;
     }
 
 
