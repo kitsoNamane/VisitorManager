@@ -63,10 +63,6 @@ public class TextRecognition
                     @Override
                     public void onSuccess(FirebaseVisionText firebaseVisionText)
                     {
-                        // Task completed successfully
-                        // ...
-
-
                         for (FirebaseVisionText.TextBlock block: firebaseVisionText.getTextBlocks())
                         {
                             String blockText = block.getText();
@@ -75,8 +71,11 @@ public class TextRecognition
                                 MRTD mrtd = new MRTD(blockText);
                                 person = mrtd.getPerson();
                                 Log.d("Person Id", person.getNationalId());
+                                text = blockText;
+                                return;
                             } else {
                                 Log.d("Block test", "Invalid : "+blockText);
+                                text = null;
                             }
                         }
                         Log.d("Block text", "Completed Analyzing image");
@@ -95,10 +94,8 @@ public class TextRecognition
 
     }
 
-    public Person getPerson()
-    {
-       return this.person;
+    public String getText() {
+        return text;
     }
-
 
 }

@@ -18,6 +18,14 @@ public class Visitor implements Serializable {
     @SerializedName("person")
     private Person person;
 
+    @ColumnInfo(name = "phone_number")
+    @SerializedName("phone_number")
+    private String phone;
+
+    @ColumnInfo(name = "plate_number")
+    @SerializedName("plate_number")
+    private String plateNumber;
+
     @ColumnInfo(name = "purpose")
     @SerializedName("purpose")
     private String purpose;
@@ -68,5 +76,21 @@ public class Visitor implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPlateNumber() {
+        return plateNumber;
+    }
+
+    public void setPlateNumber(String plateNumber) {
+        this.plateNumber = plateNumber;
     }
 }

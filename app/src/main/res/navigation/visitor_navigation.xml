@@ -37,7 +37,7 @@
         android:label="fragment_id_decode_info"
         tools:layout="@layout/fragment_id_decode_info" >
         <argument
-            android:name="imagePath"
-            app:argType="string" />
+            android:name="person"
+            app:argType="com.abstractclass.visitormanager.models.Person" />
     </fragment>
 </navigation>

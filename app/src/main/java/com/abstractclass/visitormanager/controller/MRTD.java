@@ -5,41 +5,53 @@ import android.util.Log;
 import com.abstractclass.visitormanager.models.Person;
 
 import org.apache.commons.codec.binary.StringUtils;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MRTD
 {
-    String[] doc_strings;
-    String doc_string;
-    public MRTD(String doc_string)
+    String[] docStrings;
+    String docString;
+    public static List<String> TD1lines = new ArrayList<String>();
+
+    public MRTD(String docString)
     {
-        this.doc_string = doc_string;
+        this.docString = docString;
         this.buildDocArray();
+
     }
 
     public static boolean isValidTD1(String block)
     {
-        String[] strs = block.split("\n");
-        return (strs[0].length() == 30);
-        //String regex = "I.[A-Z0<]{3}[A-Z0-9]{1,9}<?[0-9O]{1}[A-Z0-9<]{14,22}\\n[0-9O]{7}(M|F)[0-9O]{7}[A-Z0<]{3}[A-Z0-9<]{11}[0-9O]\\n([A-Z0]+<)+<([A-Z0]+<)+<+";
-        //return block.matches(regex);
+        TD1lines.add("([A|C|I][A-Z0-9<]{1})([A-Z]{3})([A-Z0-9<]{9})([0-9]{1})([A-Z0-9<]{15})");
+        TD1lines.add("([0-9]{6})([0-9]{1})([M|F|X|<]{1})([0-9]{6})([0-9]{1})([A-Z]{3})([A-Z0-9<]{11})([0-9]{1})");
+        TD1lines.add("([A-Z0-9<]{30})");
+        String[] textLines = block.split("\n");
+        for(int i = 0; i < 3; i++) {
+            Pattern pattern = Pattern.compile(TD1lines.get(i));
+            Matcher matcher = pattern.matcher(textLines[i].trim());
+            Log.d("Block test", " Regex : "+TD1lines.get(i));
+            Log.d("Block test", " Regex : "+textLines[i]);
+            if(matcher.matches() == false) return false;
+        }
+        return true;
     }
 
     private void buildDocArray()
     {
-        this.doc_strings = this.doc_string.split("\n");
+        this.docStrings = this.docString.split("\n");
         Log.d("Split", "The thing is split");
     }
 
     public Person getPerson()
     {
-        int block_counter = 0;
+        int blockCounter = 0;
         Person person = new Person();
-        for (String block:doc_strings)
+        for (String block: docStrings)
         {
-            switch (block_counter)
+            switch (blockCounter)
             {
                 case 0:
                     person.setNationalId(block.substring(15, 23));
@@ -51,7 +63,7 @@ public class MRTD
                     break;
             }
 
-            block_counter ++;
+            blockCounter ++;
         }
 
         return person;

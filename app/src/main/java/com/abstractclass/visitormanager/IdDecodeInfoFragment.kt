@@ -9,8 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import com.abstractclass.visitormanager.models.Person
+import com.abstractclass.visitormanager.models.Visitor
+import com.abstractclass.visitormanager.view_models.VisitorViewModel
 import com.bumptech.glide.Glide
-import java.io.File
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,7 +33,10 @@ class IdDecodeInfoFragment : Fragment() {
     private var param2: String? = null
     private var imagePath: String? = null
     private var imageUri: Uri? = null
+    private var visitorViewModel: VisitorViewModel? = null
     private var imageScanResult: ImageView? = null
+    private var person: Person? = null
+    private var visitor: Visitor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,17 +44,27 @@ class IdDecodeInfoFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        imagePath = arguments?.let { IdDecodeInfoFragmentArgs.fromBundle(it).imagePath }
-        imageUri = Uri.fromFile(File(imagePath))
+        person = arguments?.let { IdDecodeInfoFragmentArgs.fromBundle(it).person }
+        //imagePath = arguments?.let { IdDecodeInfoFragmentArgs.fromBundle(it).imagePath }
+        //imageUri = Uri.fromFile(File(imagePath))
+        visitor = Visitor()
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
         val view =  inflater.inflate(R.layout.fragment_id_decode_info, container, false)
         imageScanResult = view.findViewById(R.id.scan_results)
         Toast.makeText(requireContext(), imagePath, Toast.LENGTH_LONG).show()
         Glide.with(this).load(imageUri).into(view.findViewById(R.id.scan_results))
+
+        // T save to DataBase, create Visitor object, add person object to it and save to
+        // database.
+        visitor?.person = person
+        visitorViewModel?.addVisitor(visitor)
+
 
         return view;
     }

@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat
 import com.abstractclass.visitormanager.google.TextRecognition
 import java.io.File
 import java.util.concurrent.Executors
-import org.jmrtd.PassportService
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,7 +44,6 @@ class PhotoIdFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var textRecognition: TextRecognition? = null
-    private var passportService: PassportService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
