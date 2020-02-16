@@ -57,7 +57,18 @@ class PhotoIdFragment : Fragment() {
     private fun startCamera() {
 
         // Add this before CameraX.bindToLifecycle
+        // Setup image analysis pipeline that computes average pixel luminance
+        val analyzerConfig = ImageAnalysisConfig.Builder().apply {
+            // In our analysis, we care more about the latest image than
+            // analyzing *every* image
+            setImageReaderMode(
+                    ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
+        }.build()
 
+        // Build the image analysis use case and instantiate our analyzer
+        val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
+            setAnalyzer(executor, LuminosityAnalyzer())
+        }
         // Create configuration object for the image capture use case
         val imageCaptureConfig = ImageCaptureConfig.Builder()
                 .apply {
@@ -92,6 +103,8 @@ class PhotoIdFragment : Fragment() {
                             Log.d("CameraXApp", msg)
                             viewFinder.post {
                                 Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                                val actionPhoto = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(file.absolutePath)
+                                MainActivity.navController.navigate(actionPhoto)
                             }
                         }
                     })
@@ -124,7 +137,7 @@ class PhotoIdFragment : Fragment() {
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
         // version 1.1.0 or higher.
-        CameraX.bindToLifecycle(this, preview, imageCapture)
+        CameraX.bindToLifecycle(this, preview, imageCapture, analyzerUseCase)
     }
 
     private fun updateTransform() {

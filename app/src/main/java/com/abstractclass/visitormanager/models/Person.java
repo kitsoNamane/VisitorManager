@@ -31,7 +31,7 @@ public class Person implements Serializable {
 
     @ColumnInfo(name = "birth_date")
     @SerializedName("birth_date")
-    private String birthDate;
+    private int birthDate;
 
     @ColumnInfo(name = "nationality")
     @SerializedName("nationality")
@@ -73,15 +73,26 @@ public class Person implements Serializable {
         return sex;
     }
 
+    public void setGender(int gender) {
+        switch(gender) {
+            case 0:
+                this.setSex("female");
+                break;
+            case 1:
+                this.setSex("male");
+                break;
+        }
+    }
+
     public void setSex(String sex) {
         this.sex = sex;
     }
 
-    public String getBirthDate() {
+    public int getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(int birthDate) {
         this.birthDate = birthDate;
     }
 

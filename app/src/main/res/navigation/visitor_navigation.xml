@@ -11,10 +11,6 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/actionIdPhoto"
-            app:destination="@id/takeIdPhotoFragment"
-            app:launchSingleTop="true" />
-        <action
             android:id="@+id/action_homeFragment_to_photoIdFragment"
             app:destination="@id/photoIdFragment" />
     </fragment>
@@ -28,21 +24,20 @@
             app:destination="@id/homeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/takeIdPhotoFragment"
-        android:name="com.abstractclass.visitormanager.TakeIdPhotoFragment"
-        android:label="fragment_take_id_photo"
-        tools:layout="@layout/fragment_take_id_photo" >
-        <action
-            android:id="@+id/actionCarInfo"
-            app:destination="@id/carInfoFragment"
-            app:launchSingleTop="true" />
-    </fragment>
-    <fragment
         android:id="@+id/photoIdFragment"
         android:name="com.abstractclass.visitormanager.PhotoIdFragment"
         android:label="PhotoIdFragment" >
         <action
-            android:id="@+id/action_photoIdFragment_to_carInfoFragment"
-            app:destination="@id/carInfoFragment" />
+            android:id="@+id/action_photoIdFragment_to_idDecodeInfoFragment"
+            app:destination="@id/idDecodeInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/idDecodeInfoFragment"
+        android:name="com.abstractclass.visitormanager.IdDecodeInfoFragment"
+        android:label="fragment_id_decode_info"
+        tools:layout="@layout/fragment_id_decode_info" >
+        <argument
+            android:name="imagePath"
+            app:argType="string" />
     </fragment>
 </navigation>
