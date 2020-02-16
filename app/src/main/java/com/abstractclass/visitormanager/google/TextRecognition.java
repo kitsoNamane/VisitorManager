@@ -57,9 +57,11 @@ public class TextRecognition
         return  detector.processImage(this.firebaseVisionImage)
                 .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                     @Override
-                    public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                    public void onSuccess(FirebaseVisionText firebaseVisionText)
+                    {
                         // Task completed successfully
                         // ...
+
                     }
                 })
                 .addOnFailureListener(
