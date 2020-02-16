@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.abstractclass.visitormanager.controller.MRTD;
 import com.abstractclass.visitormanager.models.Person;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -69,7 +70,11 @@ public class TextRecognition
                         for (FirebaseVisionText.TextBlock block: firebaseVisionText.getTextBlocks())
                         {
                             String blockText = block.getText();
-                            Log.d("Block text:", blockText);
+                            if(MRTD.isValidTD1(blockText)) {
+                                Log.d("Block text:", blockText);
+                            } else {
+                                Log.d("Block test", "Invalid : "+blockText);
+                            }
                         }
                         Log.d("Block text", "Completed Analyzing image");
                     }
