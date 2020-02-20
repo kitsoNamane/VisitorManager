@@ -8,12 +8,14 @@ import android.util.Size
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.view_models.MRZViewModel
 import java.util.concurrent.Executors
 
@@ -159,11 +161,22 @@ class PhotoIdFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         mrzViewModel = ViewModelProvider(requireActivity()).get(MRZViewModel::class.java)
+
+        /**
         mrzViewModel?.mrzTextBlock?.observe(viewLifecycleOwner, Observer<String>{text->
             if(text != null) {
                 Toast.makeText(context, text.toString(), Toast.LENGTH_LONG).show()
                 //mrzDecoder = layoutInflater.inflate(R.layout.decoding_mrz, this.view, true)
                 //mrzDecoder = layoutInflater.inflate(R.layout.decoding_mrz, parentView)
+            }
+        })
+        */
+
+        mrzViewModel?.person?.observe(viewLifecycleOwner, Observer<Person> {person ->
+            if(person != null) {
+                Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
+                val actionPerson = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(person)
+                MainActivity.navController.navigate(actionPerson)
             }
         })
 
@@ -186,6 +199,9 @@ class PhotoIdFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_photo_id, container, false)
+
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
+        (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "ID Scanner"
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
 

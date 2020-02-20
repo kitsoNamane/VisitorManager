@@ -1,16 +1,12 @@
 package com.abstractclass.visitormanager;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -70,6 +66,8 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Abstract Class");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle("Visitor Registration");
 
         takePhoto = view.findViewById(R.id.take_id_photo);
 

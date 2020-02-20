@@ -1,19 +1,17 @@
 package com.abstractclass.visitormanager
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.models.Visitor
 import com.abstractclass.visitormanager.view_models.VisitorViewModel
-import com.bumptech.glide.Glide
+import com.google.android.material.textview.MaterialTextView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -54,16 +52,36 @@ class IdDecodeInfoFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
+        //visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
+        //visitorViewModel?.init(context)
         val view =  inflater.inflate(R.layout.fragment_id_decode_info, container, false)
-        imageScanResult = view.findViewById(R.id.scan_results)
-        Toast.makeText(requireContext(), imagePath, Toast.LENGTH_LONG).show()
-        Glide.with(this).load(imageUri).into(view.findViewById(R.id.scan_results))
 
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
+        (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "ID Verification"
+        imageScanResult = view.findViewById(R.id.scan_results)
+        //Toast.makeText(requireContext(), imagePath, Toast.LENGTH_LONG).show()
+        //Glide.with(this).load(imageUri).into(view.findViewById(R.id.scan_results))
+
+        view.findViewById<MaterialTextView>(R.id.name).setText(
+                String.format("%s %s %s", person?.firstName, person?.middleName, person?.lastName)
+        )
+
+        view.findViewById<MaterialTextView>(R.id.id_number).setText(
+                person?.nationalId
+        )
+        view.findViewById<MaterialTextView>(R.id.birthdate).setText(
+                person?.birthDate.toString()
+        )
+        view.findViewById<MaterialTextView>(R.id.gender).setText(
+                person?.sex
+        )
+        view.findViewById<MaterialTextView>(R.id.nationality).setText(
+                "Motswana"
+        )
         // T save to DataBase, create Visitor object, add person object to it and save to
         // database.
         visitor?.person = person
-        visitorViewModel?.addVisitor(visitor)
+        //visitorViewModel?.addVisitor(visitor)
 
 
         return view;

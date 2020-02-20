@@ -2,7 +2,6 @@ package com.abstractclass.visitormanager.models;
 
 import androidx.room.ColumnInfo;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -12,6 +11,10 @@ public class Person implements Serializable {
     @ColumnInfo(name = "first_name")
     @SerializedName("first_name")
     private String firstName;
+
+    @ColumnInfo(name = "middle_name")
+    @SerializedName("middle_name")
+    private String middleName;
 
     @ColumnInfo(name = "last_name")
     @SerializedName("last_name")
@@ -31,7 +34,7 @@ public class Person implements Serializable {
 
     @ColumnInfo(name = "birth_date")
     @SerializedName("birth_date")
-    private int birthDate;
+    private long birthDate;
 
     @ColumnInfo(name = "nationality")
     @SerializedName("nationality")
@@ -59,7 +62,6 @@ public class Person implements Serializable {
 
     public void setNationalId(String nationalId) {
         this.nationalId = nationalId;
-        this.setGender(Integer.parseInt(nationalId.substring(4,5)));
     }
 
     public String getPassportNumber() {
@@ -86,14 +88,20 @@ public class Person implements Serializable {
     }
 
     public void setSex(String sex) {
-        this.sex = sex;
+        if(sex.toLowerCase().equals("m")) {
+            this.sex = "male";
+        } else if(sex.toLowerCase().equals("f")) {
+            this.sex = "female";
+        } else {
+            this.sex = "undefined";
+        }
     }
 
-    public int getBirthDate() {
+    public long getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(int birthDate) {
+    public void setBirthDate(long birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -103,6 +111,28 @@ public class Person implements Serializable {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", nationalId='" + nationalId + '\'' +
+                ", passportNumber='" + passportNumber + '\'' +
+                ", sex='" + sex + '\'' +
+                ", birthDate=" + birthDate +
+                ", nationality='" + nationality + '\'' +
+                '}';
     }
 }
 
