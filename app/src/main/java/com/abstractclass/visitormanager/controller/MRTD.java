@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.abstractclass.visitormanager.models.Person;
 
-import org.apache.commons.codec.binary.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,9 +24,20 @@ public class MRTD
 
     public static boolean isValidTD1(String block)
     {
+        /**
         TD1lines.add("([A|C|I][A-Z0-9<]{1})([A-Z]{3})([A-Z0-9<]{9})([0-9]{1})([A-Z0-9<]{15})");
         TD1lines.add("([0-9]{6})([0-9]{1})([M|F|X|<]{1})([0-9]{6})([0-9]{1})([A-Z]{3})([A-Z0-9<]{11})([0-9]{1})");
         TD1lines.add("([A-Z0-9<]{30})");
+         */
+
+        String validator = "([A|C|I][A-Z0-9<]{1})([A-Z]{3})([A-Z0-9<]{9})([0-9]{1})([A-Z0-9<]{15})\n([0-9]{6})([0-9]{1})([M|F|X|<]{1})([0-9]{6})([0-9]{1})([A-Z]{3})([A-Z0-9<]{11})([0-9]{1})\n([A-Z0-9<]{30})";
+
+        Pattern pattern = Pattern.compile(validator);
+        Matcher matcher = pattern.matcher(block);
+        Log.d("Block test", " Regex : "+validator);
+        Log.d("Block test", " Regex : "+block);
+        if(matcher.matches() == false) return false;
+        /**
         String[] textLines = block.split("\n");
         for(int i = 0; i < 3; i++) {
             Pattern pattern = Pattern.compile(TD1lines.get(i));
@@ -36,6 +46,7 @@ public class MRTD
             Log.d("Block test", " Regex : "+textLines[i]);
             if(matcher.matches() == false) return false;
         }
+         */
         return true;
     }
 

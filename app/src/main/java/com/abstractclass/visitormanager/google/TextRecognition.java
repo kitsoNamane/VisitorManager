@@ -53,49 +53,54 @@ public class TextRecognition
         return true;
     }
 
-    public void recognizeText()
-    {
-        String test = "cows";
+    public boolean recognizeText() {
         this.createFirebaseVisionImage();
         Task<FirebaseVisionText> result =
           detector.processImage(this.firebaseVisionImage)
-                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-                    @Override
-                    public void onSuccess(FirebaseVisionText firebaseVisionText)
+            .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                @Override
+                public void onSuccess(FirebaseVisionText firebaseVisionText)
+                {
+                    for (FirebaseVisionText.TextBlock block: firebaseVisionText.getTextBlocks())
                     {
-                        for (FirebaseVisionText.TextBlock block: firebaseVisionText.getTextBlocks())
-                        {
-                            String blockText = block.getText();
-                            if(MRTD.isValidTD1(blockText)) {
-                                Log.d("Block text:", blockText);
-                                MRTD mrtd = new MRTD(blockText);
-                                person = mrtd.getPerson();
-                                Log.d("Person Id", person.getNationalId());
-                                text = blockText;
-                                return;
-                            } else {
-                                Log.d("Block test", "Invalid : "+blockText);
-                                text = null;
-                            }
+                        String blockText = block.getText();
+                        if(MRTD.isValidTD1(blockText)) {
+                            Log.d("Block text:", blockText);
+                            MRTD mrtd = new MRTD(blockText);
+                            person = mrtd.getPerson();
+                            Log.d("Person Id", person.getNationalId());
+                            text = blockText;
+                            return;
+                        } else {
+                            Log.d("Block test", "Invalid : "+blockText);
+                            text = null;
                         }
-                        Log.d("Block text", "Completed Analyzing image");
                     }
-                })
-                .addOnFailureListener(
-                    new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Task failed with an exception
-                            // ...
-                            e.printStackTrace();
-                        }
+                    Log.d("Block text", "Completed Analyzing image");
                 }
+            })
+            .addOnFailureListener(
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Task failed with an exception
+                        // ...
+                        e.printStackTrace();
+                    }
+            }
         );
+
+        if(text != null) return true;
+        return false;
 
     }
 
     public String getText() {
         return text;
+    }
+
+    public Person getPerson() {
+       return person;
     }
 
 }

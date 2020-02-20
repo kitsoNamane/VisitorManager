@@ -9,11 +9,11 @@ import android.util.Log
 import android.util.Size
 import android.view.*
 import android.widget.ImageButton
-import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.abstractclass.visitormanager.google.TextRecognition
 import java.io.File
 import java.util.concurrent.Executors
@@ -57,8 +57,6 @@ class PhotoIdFragment : Fragment() {
 
     private fun startCamera() {
 
-        // Add this before CameraX.bindToLifecycle
-        // Setup image analysis pipeline that computes average pixel luminance
         val analyzerConfig = ImageAnalysisConfig.Builder().apply {
             // In our analysis, we care more about the latest image than
             // analyzing *every* image
@@ -66,10 +64,11 @@ class PhotoIdFragment : Fragment() {
                     ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
         }.build()
 
-        // Build the image analysis use case and instantiate our analyzer
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, LuminosityAnalyzer())
+            setAnalyzer(executor, MRZImangeAnalyzer())
         }
+
+
         // Create configuration object for the image capture use case
         val imageCaptureConfig = ImageCaptureConfig.Builder()
                 .apply {
@@ -103,6 +102,7 @@ class PhotoIdFragment : Fragment() {
                             val msg = "Photo capture succeeded: ${file.absolutePath}"
                             textRecognition = TextRecognition(requireContext(), Uri.fromFile(file))
                             textRecognition?.recognizeText()
+
 
                             Log.d("CameraXApp", msg)
                             viewFinder.post {
