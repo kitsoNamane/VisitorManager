@@ -1,15 +1,14 @@
 package com.abstractclass.visitormanager
 
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.abstractclass.visitormanager.controller.MRTD
+import com.abstractclass.visitormanager.view_models.MRZViewModel
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 
-public class MRZImangeAnalyzer : ImageAnalysis.Analyzer {
-
+class MRZImangeAnalyzer(mrzViewModel: MRZViewModel?) : ImageAnalysis.Analyzer {
+    private val mrzViewModel: MRZViewModel? = mrzViewModel
     private val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
 
     private fun degreesToFirebaseRotation(degrees: Int): Int = when(degrees) {
@@ -27,33 +26,17 @@ public class MRZImangeAnalyzer : ImageAnalysis.Analyzer {
             val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
             // Pass image to an ML Kit Vision API
             val result = detector.processImage(image)
-                    .addOnSuccessListener { firebaseVisionText ->
-                        for (block in firebaseVisionText.textBlocks) {
-                            val boundingBox = block.boundingBox
-                            val cornerPoints = block.cornerPoints
-                            boundingBox?.set(1, 1, 1,1)
-                            if(MRTD.isValidTD1(block.text)) {
-                                Log.d("Block test Success", block.text)
-                            } else {
-                                Log.d("Block test Failed", block.text)
-                            }
-
-                            /**
-                            for(text in block.text) {
-                                if(MRTD.isValidTD1(text.toString())) {
-                                   Log.d("Block test Success", text.toString())
-                                } else {
-                                    Log.d("Block test Failer", text.toString())
-                                }
-                            }
-                            */
-                        }
+                .addOnSuccessListener { firebaseVisionText ->
+                    for (block in firebaseVisionText.textBlocks) {
+                        val boundingBox = block.boundingBox
+                        val cornerPoints = block.cornerPoints
+                        boundingBox?.set(1, 1, 1,1)
+                        mrzViewModel?.setTextblock(block.text)
                     }
-                    .addOnFailureListener { e ->
-                        e.printStackTrace()
-                    }
-
-
+                }
+                .addOnFailureListener { e ->
+                    e.printStackTrace()
+                }
         }
 
     }

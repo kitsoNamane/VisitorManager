@@ -3,11 +3,9 @@ package com.abstractclass.visitormanager.google;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.abstractclass.visitormanager.controller.MRTD;
 import com.abstractclass.visitormanager.models.Person;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -64,6 +62,7 @@ public class TextRecognition
                     for (FirebaseVisionText.TextBlock block: firebaseVisionText.getTextBlocks())
                     {
                         String blockText = block.getText();
+                        /**
                         if(MRTD.isValidTD1(blockText)) {
                             Log.d("Block text:", blockText);
                             MRTD mrtd = new MRTD(blockText);
@@ -75,8 +74,9 @@ public class TextRecognition
                             Log.d("Block test", "Invalid : "+blockText);
                             text = null;
                         }
-                    }
                     Log.d("Block text", "Completed Analyzing image");
+                    */
+                    }
                 }
             })
             .addOnFailureListener(

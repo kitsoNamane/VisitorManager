@@ -3,19 +3,18 @@ package com.abstractclass.visitormanager
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Matrix
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.util.Size
 import android.view.*
-import android.widget.ImageButton
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.abstractclass.visitormanager.google.TextRecognition
-import java.io.File
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.abstractclass.visitormanager.view_models.MRZViewModel
 import java.util.concurrent.Executors
 
 // TODO: Rename parameter arguments, choose names that match
@@ -43,7 +42,10 @@ class PhotoIdFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var textRecognition: TextRecognition? = null
+    private var mrzViewModel: MRZViewModel? = null
+    private var mrzDecoder: FrameLayout? = null
+    private var parentView: View? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,7 @@ class PhotoIdFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
+
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var viewFinder: TextureView
 
@@ -65,9 +68,8 @@ class PhotoIdFragment : Fragment() {
         }.build()
 
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, MRZImangeAnalyzer())
+            setAnalyzer(executor, MRZImangeAnalyzer(mrzViewModel))
         }
-
 
         // Create configuration object for the image capture use case
         val imageCaptureConfig = ImageCaptureConfig.Builder()
@@ -77,44 +79,6 @@ class PhotoIdFragment : Fragment() {
                     // resolution based on aspect ration and requested mode
                     setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
                 }.build()
-
-        // Build the image capture use case and attach button click listener
-        val imageCapture = ImageCapture(imageCaptureConfig)
-        activity?.findViewById<ImageButton>(R.id.capture_button)?.setOnClickListener {
-            val file = File(activity?.externalMediaDirs?.first(),
-                    "${System.currentTimeMillis()}.jpg")
-
-            imageCapture.takePicture(file, executor,
-                    object : ImageCapture.OnImageSavedListener {
-                        override fun onError(
-                                imageCaptureError: ImageCapture.ImageCaptureError,
-                                message: String,
-                                exc: Throwable?
-                        ) {
-                            val msg = "Photo capture failed: $message"
-                            Log.e("CameraXApp", msg, exc)
-                            viewFinder.post {
-                                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                            }
-                        }
-
-                        override fun onImageSaved(file: File) {
-                            val msg = "Photo capture succeeded: ${file.absolutePath}"
-                            textRecognition = TextRecognition(requireContext(), Uri.fromFile(file))
-                            textRecognition?.recognizeText()
-
-
-                            Log.d("CameraXApp", msg)
-                            viewFinder.post {
-                                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                                //val actionPhoto = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(file.absolutePath)
-                                //MainActivity.navController.navigate(actionPhoto)
-                            }
-                        }
-                    })
-        }
-
-        // TODO: Implement CameraX operations
 
         // Create configuration object for the viewfinder use case
         val previewConfig = PreviewConfig.Builder().apply {
@@ -141,7 +105,7 @@ class PhotoIdFragment : Fragment() {
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
         // version 1.1.0 or higher.
-        CameraX.bindToLifecycle(this, preview, imageCapture, analyzerUseCase)
+        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {
@@ -192,13 +156,17 @@ class PhotoIdFragment : Fragment() {
                 requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        mrzViewModel = ViewModelProvider(requireActivity()).get(MRZViewModel::class.java)
+        mrzViewModel?.mrzTextBlock?.observe(viewLifecycleOwner, Observer<String>{text->
+            if(text != null) {
+                Toast.makeText(context, text.toString(), Toast.LENGTH_LONG).show()
+                //mrzDecoder = layoutInflater.inflate(R.layout.decoding_mrz, this.view, true)
+                //mrzDecoder = layoutInflater.inflate(R.layout.decoding_mrz, parentView)
+            }
+        })
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_photo_id, container, false)
-
-        viewFinder = view.findViewById(R.id.view_finder)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -212,6 +180,14 @@ class PhotoIdFragment : Fragment() {
         viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateTransform()
         }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_photo_id, container, false)
+        viewFinder = view.findViewById(R.id.view_finder)
+        mrzDecoder = view.findViewById(R.id.decode_mrz)
 
         return view;
     }
@@ -228,11 +204,11 @@ class PhotoIdFragment : Fragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-                PhotoIdFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
-                }
+            PhotoIdFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+            }
+        }
     }
 }
