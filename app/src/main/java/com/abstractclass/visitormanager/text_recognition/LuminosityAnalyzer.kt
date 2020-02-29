@@ -1,4 +1,4 @@
-package com.abstractclass.visitormanager
+package com.abstractclass.visitormanager.text_recognition
 
 import android.util.Log
 import androidx.camera.core.ImageAnalysis

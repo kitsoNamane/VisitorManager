@@ -4,7 +4,7 @@
     android:id="@+id/car_info_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.abstractclass.visitormanager.CarInfoFragment">
+    tools:context="com.abstractclass.visitormanager.views.fragments.CarInfoFragment">
 
     <TextView
         android:id="@+id/plate_number_label"

@@ -3,41 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/visitor_navigation"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/welcomeFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.abstractclass.visitormanager.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_homeFragment_to_photoIdFragment"
-            app:destination="@id/photoIdFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/carInfoFragment"
-        android:name="com.abstractclass.visitormanager.CarInfoFragment"
-        android:label="fragment_car_info"
-        tools:layout="@layout/fragment_car_info" >
-        <action
-            android:id="@+id/actionGoHome"
-            app:destination="@id/homeFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/photoIdFragment"
-        android:name="com.abstractclass.visitormanager.PhotoIdFragment"
+        android:name="com.abstractclass.visitormanager.views.fragments.PhotoIdFragment"
         android:label="PhotoIdFragment" >
         <action
             android:id="@+id/action_photoIdFragment_to_idDecodeInfoFragment"
-            app:destination="@id/idDecodeInfoFragment" />
+            app:destination="@id/idDecodeInfoFragment"
+            app:popEnterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_enter" />
     </fragment>
     <fragment
         android:id="@+id/idDecodeInfoFragment"
-        android:name="com.abstractclass.visitormanager.IdDecodeInfoFragment"
+        android:name="com.abstractclass.visitormanager.views.fragments.IdDecodeInfoFragment"
         android:label="fragment_id_decode_info"
         tools:layout="@layout/fragment_id_decode_info" >
         <argument
             android:name="person"
             app:argType="com.abstractclass.visitormanager.models.Person" />
     </fragment>
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.abstractclass.visitormanager.views.fragments.WelcomeFragment"
+        android:label="fragment_welcome"
+        tools:layout="@layout/fragment_welcome" >
+        <action
+            android:id="@+id/action_scan_id"
+            app:destination="@id/photoIdFragment"
+            app:popEnterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_signin"
+            app:destination="@id/signInFragment"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_enter" />
+        <action
+            android:id="@+id/action_signout"
+            app:destination="@id/signOutFragment"
+            app:popEnterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.abstractclass.visitormanager.views.fragments.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_photo_id"
+            app:destination="@id/idDecodeInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signOutFragment"
+        android:name="com.abstractclass.visitormanager.views.fragments.SignOutFragment"
+        android:label="fragment_sign_out"
+        tools:layout="@layout/fragment_sign_out" />
+    <fragment
+        android:id="@+id/reportsFragment"
+        android:name="com.abstractclass.visitormanager.views.fragments.ReportsFragment"
+        android:label="fragment_reports"
+        tools:layout="@layout/fragment_reports" />
+    <action
+        android:id="@+id/action_reports"
+        app:destination="@id/reportsFragment"
+        app:popEnterAnim="@anim/fragment_open_enter"
+        app:popExitAnim="@anim/fragment_close_exit" />
 </navigation>

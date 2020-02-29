@@ -1,4 +1,4 @@
-package com.abstractclass.visitormanager
+package com.abstractclass.visitormanager.views.fragments
 
 import android.net.Uri
 import android.os.Bundle
@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.models.Visitor
+import com.abstractclass.visitormanager.utils.Utils
 import com.abstractclass.visitormanager.view_models.VisitorViewModel
 import com.google.android.material.textview.MaterialTextView
 
@@ -63,24 +65,26 @@ class IdDecodeInfoFragment : Fragment() {
         //Glide.with(this).load(imageUri).into(view.findViewById(R.id.scan_results))
 
         view.findViewById<MaterialTextView>(R.id.name).setText(
-                String.format("%s %s %s", person?.firstName, person?.middleName, person?.lastName)
+                String.format("%s %s %s", person?.getFirstName(), person?.getMiddleName(), person?.getLastName())
         )
 
         view.findViewById<MaterialTextView>(R.id.id_number).setText(
-                person?.nationalId
+                person?.getNationalId()
         )
         view.findViewById<MaterialTextView>(R.id.birthdate).setText(
-                person?.birthDate.toString()
+            Utils.timeStampToString(
+                person?.getBirthDate()!!.toLong()
+            ).toString()
         )
         view.findViewById<MaterialTextView>(R.id.gender).setText(
-                person?.sex
+                person?.getSex()
         )
         view.findViewById<MaterialTextView>(R.id.nationality).setText(
                 "Motswana"
         )
         // T save to DataBase, create Visitor object, add person object to it and save to
         // database.
-        visitor?.person = person
+        visitor?.setPerson(person)
         //visitorViewModel?.addVisitor(visitor)
 
 
