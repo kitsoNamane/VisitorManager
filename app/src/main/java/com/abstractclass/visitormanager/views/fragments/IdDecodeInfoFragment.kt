@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.models.Visitor
@@ -54,8 +57,13 @@ class IdDecodeInfoFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        //visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
-        //visitorViewModel?.init(context)
+        visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
+        visitorViewModel?.initialize(context!!)
+        visitorViewModel!!.getVisitors()?.observe(viewLifecycleOwner, Observer {
+            if(it?.get(it.lastIndex)?.person?.nationalId == person?.nationalId) {
+                Toast.makeText(context, visitorViewModel?.getVisitor(person?.nationalId!!).toString(), Toast.LENGTH_LONG).show()
+            }
+        })
         val view =  inflater.inflate(R.layout.fragment_id_decode_info, container, false)
 
         (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
@@ -65,29 +73,27 @@ class IdDecodeInfoFragment : Fragment() {
         //Glide.with(this).load(imageUri).into(view.findViewById(R.id.scan_results))
 
         view.findViewById<MaterialTextView>(R.id.name).setText(
-                String.format("%s %s %s", person?.getFirstName(), person?.getMiddleName(), person?.getLastName())
+                String.format("%s %s %s", person?.firstName, person?.middleName, person?.lastName)
         )
 
         view.findViewById<MaterialTextView>(R.id.id_number).setText(
-                person?.getNationalId()
+                person?.nationalId
         )
         view.findViewById<MaterialTextView>(R.id.birthdate).setText(
             Utils.timeStampToString(
-                person?.getBirthDate()!!.toLong()
+                person?.birthDate!!.toLong()
             ).toString()
         )
         view.findViewById<MaterialTextView>(R.id.gender).setText(
-                person?.getSex()
+                person?.sex
         )
         view.findViewById<MaterialTextView>(R.id.nationality).setText(
                 "Motswana"
         )
         // T save to DataBase, create Visitor object, add person object to it and save to
         // database.
-        visitor?.setPerson(person)
-        //visitorViewModel?.addVisitor(visitor)
-
-
+        visitor?.person = person
+        visitorViewModel?.addVisitor(visitor)
         return view;
     }
 

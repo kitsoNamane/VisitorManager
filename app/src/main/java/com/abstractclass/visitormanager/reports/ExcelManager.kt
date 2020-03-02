@@ -61,25 +61,25 @@ class ExcelManager(context: Context?) {
         var row: Row?
         for (visitor in visitors!!) {
             row = sheet?.createRow(row_counter)
-            val person = visitor?.getPerson()
+            val person = visitor?.person
             cell = row?.createCell(0)!!
-            cell.setCellValue(person?.getFirstName())
+            cell.setCellValue(person?.firstName)
             cell = row.createCell(1)
-            cell?.setCellValue(person?.getLastName())
+            cell?.setCellValue(person?.lastName)
             cell = row.createCell(2)
-            cell?.setCellValue(person?.getNationalId())
+            cell?.setCellValue(person?.nationalId)
             cell = row.createCell(2)
-            cell?.setCellValue(person?.getBirthDate()?.toDouble()!!)
+            cell?.setCellValue(person?.birthDate?.toDouble()!!)
             cell = row.createCell(2)
-            cell?.setCellValue(person?.getSex())
+            cell?.setCellValue(person?.sex)
             cell = row.createCell(3)
-            cell?.setCellValue(visitor?.getTimeIn()?.toDouble()!!)
+            cell?.setCellValue(visitor?.timeIn?.toDouble()!!)
             cell = row.createCell(4)
-            cell?.setCellValue(visitor?.getPurpose())
+            cell?.setCellValue(visitor?.purpose)
             cell = row.createCell(5)
             cell?.setCellValue("Plate Number")
             cell = row.createCell(6)
-            cell?.setCellValue(visitor?.getTimeOut()?.toDouble()!!)
+            cell?.setCellValue(visitor?.timeOut?.toDouble()!!)
         }
     }
 

@@ -8,9 +8,41 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 @Entity(tableName = "visitor_table")
+data class Visitor (
+   @PrimaryKey(autoGenerate = false)
+    var id: Int? = null,
+
+    @Embedded
+    @SerializedName("person")
+    var person: Person? = null,
+
+    @ColumnInfo(name = "phone_number")
+    @SerializedName("phone_number")
+    var phone: String? = null,
+
+    @ColumnInfo(name = "plate_number")
+    @SerializedName("plate_number")
+    var plateNumber: String? = null,
+
+    @ColumnInfo(name = "purpose")
+    @SerializedName("purpose")
+    var purpose: String? = null,
+
+    @ColumnInfo(name = "time_in")
+    @SerializedName("time_in")
+    var timeIn: Long? = null,
+
+    @ColumnInfo(name = "time_out")
+    @SerializedName("time_out")
+    var timeOut: Long? = null
+
+) : Serializable
+
+/**
+@Entity(tableName = "visitor_table")
 class Visitor : Serializable {
-    @PrimaryKey(autoGenerate = true)
-    private var id = 0
+    @PrimaryKey(autoGenerate = false)
+    val id: Int
     @Embedded
     @SerializedName("person")
     private var person: Person? = null
@@ -60,6 +92,7 @@ class Visitor : Serializable {
 
     fun setPerson(person: Person?) {
         this.person = person
+        setId(Integer.parseInt(person?.getNationalId()!!))
     }
 
     fun getId(): Int {
@@ -86,3 +119,4 @@ class Visitor : Serializable {
         this.plateNumber = plateNumber
     }
 }
+ */

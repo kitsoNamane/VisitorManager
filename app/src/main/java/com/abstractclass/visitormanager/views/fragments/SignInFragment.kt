@@ -3,10 +3,12 @@ package com.abstractclass.visitormanager.views.fragments
 import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.os.Bundle
+import android.util.Log
 import android.util.Size
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
@@ -51,14 +53,13 @@ class SignInFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
 
-        /** This callback will only be called when MyFragment is at least Started.
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            Log.d("ScanID", "Back Button Pressed")
-            CameraX.unbindAll()
-            MainActivity.navController!!.popBackStack()
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this, true) {
+            viewFinder.post {
+                Log.d("ScanID", "Back Button Pressed")
+                CameraX.unbindAll()
+                MainActivity.navController!!.popBackStack()
+            }
         }
-        callback.isEnabled = true
-        */
     }
 
     private val executor = Executors.newSingleThreadExecutor()
@@ -100,8 +101,7 @@ class SignInFragment : Fragment() {
         // Bind use cases to lifecycle
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
-        // version 1.1.0 or higher.
-        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
+        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {
@@ -190,12 +190,6 @@ class SignInFragment : Fragment() {
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
         return view
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        executor.shutdown()
     }
 
     companion object {

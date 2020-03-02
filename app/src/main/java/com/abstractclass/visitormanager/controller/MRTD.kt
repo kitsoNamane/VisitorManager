@@ -48,7 +48,6 @@ class MRTD {
     fun decodeTD1() {
         if (person == null) person = Person()
         val mrtdGroupList = Arrays.asList<String?>(*mrtd?.split("\n")?.toTypedArray()!!)
-        //Iterator<String> mrtdGroups = mrtdGroupList.iterator();
         decodeTD1FirstGroup(mrtdGroupList[0])
         decodeTD1SecondGroup(mrtdGroupList[1])
         decodeTD1ThirdGroup(mrtdGroupList[2])
@@ -56,10 +55,9 @@ class MRTD {
 
     fun decodeTD1FirstGroup(group: String?) {
         var i = group?.indexOf("<")!!
-        //group.replaceFirst("<", "_");
         i += 2
         val j = group.indexOf("<", i)
-        person?.setNationalId(group.substring(i, j))
+        person?.nationalId = group.substring(i, j)
     }
 
     fun decodeTD1SecondGroup(group: String?) { // birthdate
@@ -75,24 +73,31 @@ class MRTD {
         }
         val formatIdDateString = String.format("%s-%s-%s 00:00:00", year, month, day)
         val timestamp = Timestamp.valueOf(formatIdDateString)
-        person?.setBirthDate(timestamp.time)
+        person?.birthDate = timestamp.time
         // gender
         val gender = group?.get(7).toString()
-        person?.setSex(gender)
+
+        if (gender?.toLowerCase() == "m") {
+            person?.sex = "male"
+        } else if (gender?.toLowerCase() == "f") {
+            person?.sex = "female"
+        } else {
+            person?.sex = "undefined"
+        }
     }
 
     fun decodeTD1ThirdGroup(group: String?) {
         var i = group?.indexOf("<")!!
-        person?.setLastName(group.substring(0, i))
+        person?.lastName = group.substring(0, i)
         i += 2
         group.replaceFirst("<".toRegex(), "_")
         group.replaceFirst("<".toRegex(), "_")
         var j = group.indexOf("<", i)
         group.replaceFirst("<".toRegex(), "_")
-        person?.setFirstName(group.substring(i, j))
+        person?.firstName = group.substring(i, j)
         i = j + 1
         j = group.indexOf("<", i)
-        person?.setMiddleName(group.substring(i, j))
+        person?.middleName = group.substring(i, j)
         personMutableLiveData?.postValue(person)
     }
 

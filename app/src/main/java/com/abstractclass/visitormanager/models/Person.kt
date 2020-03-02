@@ -4,6 +4,41 @@ import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
+data class Person(
+    @ColumnInfo(name = "first_name")
+    @SerializedName("first_name")
+    var firstName: String? = null,
+
+    @ColumnInfo(name = "middle_name")
+    @SerializedName("middle_name")
+    var middleName: String? = null,
+
+    @ColumnInfo(name = "last_name")
+    @SerializedName("last_name")
+    var lastName: String? = null,
+
+    @ColumnInfo(name = "national_id")
+    @SerializedName("national_id")
+    var nationalId: String? = null,
+
+    @ColumnInfo(name = "passport_number")
+    @SerializedName("passport_number")
+    var passportNumber: String? = null,
+
+    @ColumnInfo(name = "sex")
+    @SerializedName("sex")
+    var sex: String? = null,
+
+    @ColumnInfo(name = "birth_date")
+    @SerializedName("birth_date")
+    var birthDate: Long = 0,
+
+    @ColumnInfo(name = "nationality")
+    @SerializedName("nationality")
+    var nationality: String? = null
+) : Serializable
+
+/**
 class Person : Serializable {
     @ColumnInfo(name = "first_name")
     @SerializedName("first_name")
@@ -120,3 +155,4 @@ class Person : Serializable {
                 '}'
     }
 }
+ */

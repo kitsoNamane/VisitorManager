@@ -3,10 +3,12 @@ package com.abstractclass.visitormanager.views.fragments
 import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.os.Bundle
+import android.util.Log
 import android.util.Size
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
@@ -49,16 +51,15 @@ class SignOutFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        /** This callback will only be called when MyFragment is at least Started.
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            // Handle the back button event
-            Log.d("ScanID", "Back Button Pressed")
-            CameraX.unbindAll()
-            MainActivity.navController?.popBackStack()
-        }
-        callback.isEnabled = true
-        */
 
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this, true) {
+            // Handle the back button event
+            viewFinder.post {
+                Log.d("ScanID", "Back Button Pressed")
+                CameraX.unbindAll()
+                MainActivity.navController?.popBackStack()
+            }
+        }
     }
 
     private val executor = Executors.newSingleThreadExecutor()
@@ -102,7 +103,7 @@ class SignOutFragment : Fragment() {
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
         // version 1.1.0 or higher.
-        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
+        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {
@@ -161,11 +162,10 @@ class SignOutFragment : Fragment() {
         mrzViewModel?.getPerson()?.observe(viewLifecycleOwner, Observer<Person?> { person ->
             if(person != null) {
                 Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
-                val actionPerson = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(person)
-                MainActivity.navController?.navigate(actionPerson)
+                //val actionPerson = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(person)
+                //MainActivity.navController?.navigate(actionPerson)
             }
         })
-
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -181,22 +181,15 @@ class SignOutFragment : Fragment() {
         }
     }
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        var view =  inflater.inflate(R.layout.fragment_sign_out, container, false)
+        val view =  inflater.inflate(R.layout.fragment_sign_out, container, false)
         (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Sign Out"
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
         return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        executor.shutdown()
     }
 
     companion object {

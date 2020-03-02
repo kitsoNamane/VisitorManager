@@ -16,19 +16,22 @@ abstract class VisitorAppDatabase : RoomDatabase() {
         private var INSTANCE: VisitorAppDatabase? = null
         private const val NUMBER_OF_THREADS = 4
         val databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
-        fun getDatabase(context: Context?): VisitorAppDatabase? {
-            if (INSTANCE == null) {
-                synchronized(VisitorAppDatabase::class.java) {
-                    if (INSTANCE == null) {
-                        INSTANCE = VisitorAppDatabase::class.java.let {
-                            Room.databaseBuilder<VisitorAppDatabase>(context!!.getApplicationContext(),
-                                    it, "visitor_app_db")
-                                    .build()
-                        }
-                    }
-                }
+
+        fun getDatabase(context: Context): VisitorAppDatabase? {
+            val tempInstance = INSTANCE
+            if (tempInstance != null) {
+                return tempInstance
             }
-            return INSTANCE
+
+            synchronized(this) {
+                val instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        VisitorAppDatabase::class.java,
+                        "visitor_app_db"
+                ).allowMainThreadQueries().build()
+                INSTANCE = instance
+                return instance
+            }
         }
     }
 }

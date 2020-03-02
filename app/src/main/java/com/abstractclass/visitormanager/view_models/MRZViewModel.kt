@@ -10,14 +10,6 @@ import com.abstractclass.visitormanager.models.Person
 class MRZViewModel : ViewModel() {
     private val mrtd: MRTD? = MRTD()
     private val textblock: MutableLiveData<String?>? = MutableLiveData()
-    /**
-     * private LiveData<String> mrzTextBlock = Transformations.switchMap(textblock, textblock -> {
-     * if(mrtd.isValidTD1(textblock)) {
-     * return mrtd.getMrtdText();
-     * }
-     * return mrtd.resetMrtdText();
-     * });
-    </String> */
 
     private val person: LiveData<Person?>? = Transformations.switchMap(textblock!!) { textblock: String? ->
         if (mrtd?.isValidTD1(textblock)!!) {
@@ -27,16 +19,11 @@ class MRZViewModel : ViewModel() {
         }
     }
 
-
     fun setTextblock(text: String?) {
         textblock?.setValue(text)
     }
 
-    /**
-     * public LiveData<String> getMrzTextBlock() {
-     * return mrzTextBlock;
-     * }
-    </String> */
+
     fun getPerson(): LiveData<Person?>? {
         return person
     }

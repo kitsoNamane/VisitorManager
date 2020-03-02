@@ -12,5 +12,8 @@ interface VisitorDao {
     fun addVisitor(visitor: Visitor?)
 
     @Query("SELECT * FROM visitor_table ORDER BY time_in ASC")
-    fun getAllVisitors(): LiveData<MutableList<Visitor?>?>?
+    fun getAllVisitors(): LiveData<List<Visitor?>>?
+
+    @Query("SELECT * FROM visitor_table WHERE national_id = :nationalId")
+    fun getVisitor(nationalId: String): Visitor
 }
