@@ -1,7 +1,8 @@
 package com.abstractclass.visitormanager.views.fragments
 
-import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +10,17 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.models.Visitor
 import com.abstractclass.visitormanager.utils.Utils
 import com.abstractclass.visitormanager.view_models.VisitorViewModel
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textview.MaterialTextView
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,12 +38,14 @@ class IdDecodeInfoFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var imagePath: String? = null
-    private var imageUri: Uri? = null
     private var visitorViewModel: VisitorViewModel? = null
     private var imageScanResult: ImageView? = null
     private var person: Person? = null
     private var visitor: Visitor? = null
+    private var phoneNumber: TextInputEditText? = null
+    private var purposeOfVisit: TextInputEditText? = null
+    private var plateNumber: TextInputEditText? = null
+    private var addVisitor: MaterialButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,21 +63,12 @@ class IdDecodeInfoFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
-        visitorViewModel?.initialize(context!!)
-        visitorViewModel!!.getVisitors()?.observe(viewLifecycleOwner, Observer {
-            if(it?.get(it.lastIndex)?.person?.nationalId == person?.nationalId) {
-                Toast.makeText(context, visitorViewModel?.getVisitor(person?.nationalId!!).toString(), Toast.LENGTH_LONG).show()
-            }
-        })
         val view =  inflater.inflate(R.layout.fragment_id_decode_info, container, false)
 
         (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "ID Verification"
-        imageScanResult = view.findViewById(R.id.scan_results)
-        //Toast.makeText(requireContext(), imagePath, Toast.LENGTH_LONG).show()
-        //Glide.with(this).load(imageUri).into(view.findViewById(R.id.scan_results))
 
+        imageScanResult = view.findViewById(R.id.scan_results)
         view.findViewById<MaterialTextView>(R.id.name).setText(
                 String.format("%s %s %s", person?.firstName, person?.middleName, person?.lastName)
         )
@@ -90,11 +87,69 @@ class IdDecodeInfoFragment : Fragment() {
         view.findViewById<MaterialTextView>(R.id.nationality).setText(
                 "Motswana"
         )
+
+        phoneNumber = view.findViewById(R.id.phone_number_text)
+        purposeOfVisit = view.findViewById(R.id.purpose_text)
+        plateNumber = view.findViewById(R.id.plate_number_text)
+        addVisitor = view.findViewById(R.id.add_btn)
+
+
         // T save to DataBase, create Visitor object, add person object to it and save to
         // database.
-        visitor?.person = person
-        visitorViewModel?.addVisitor(visitor)
         return view;
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
+        visitorViewModel?.initialize(context!!)
+
+        addVisitor?.setOnClickListener(View.OnClickListener {
+            visitor?.person = person
+            visitor?.timeIn = Utils.getCurrentTime()
+            visitorViewModel?.addVisitor(visitor)
+            Toast.makeText(context, "Added Visitor", Toast.LENGTH_LONG).show()
+            /**
+            if(visitorViewModel?.getVisitor(person?.nationalId!!) == null) {
+                Toast.makeText(context, "Added Visitor", Toast.LENGTH_LONG).show()
+            } else if(visitorViewModel?.getVisitor(person?.nationalId!!)?.timeOut == null) {
+                visitorViewModel?.addVisitor(visitor)
+                Toast.makeText(context, visitorViewModel?.getVisitor(person?.nationalId!!).toString(), Toast.LENGTH_LONG).show()
+            }
+            */
+            MainActivity.navController?.navigate(ReportsFragmentDirections.actionReports())
+        })
+
+        phoneNumber?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                if (s.length > 0) {
+                    visitor?.phone = s.toString()
+                    MainActivity.navController?.navigate(ReportsFragmentDirections.actionReports())
+                }
+            }
+        })
+
+        purposeOfVisit?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                if (s.length > 0) {
+                    visitor?.purpose = s.toString()
+                }
+            }
+        })
+
+        plateNumber?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                if (s.length > 0) {
+                    visitor?.plateNumber = s.toString()
+                }
+            }
+        })
     }
 
     companion object {

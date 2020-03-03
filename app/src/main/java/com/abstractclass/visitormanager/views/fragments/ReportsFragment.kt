@@ -1,13 +1,17 @@
 package com.abstractclass.visitormanager.views.fragments
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.abstractclass.visitormanager.R
+import com.abstractclass.visitormanager.reports.ExcelWorkSheet
+import com.abstractclass.visitormanager.utils.Email
+import com.abstractclass.visitormanager.utils.Utils
+import com.abstractclass.visitormanager.view_models.VisitorViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,7 +21,6 @@ private const val ARG_PARAM2 = "param2"
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [ReportsFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
  * Use the [ReportsFragment.newInstance] factory method to
  * create an instance of this fragment.
@@ -26,7 +29,9 @@ class ReportsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var listener: OnFragmentInteractionListener? = null
+    private var excelWorkSheet: ExcelWorkSheet? = null
+    private var email: Email? = null
+    private var visitorViewModel: VisitorViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,42 +44,36 @@ class ReportsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reports, container, false)
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+        val view = inflater.inflate(R.layout.fragment_reports, container, false)
+        if(Utils.isExternalStorageReadable()) {
+            Toast.makeText(context, "external unreadable", Toast.LENGTH_LONG).show()
         }
+        if(Utils.isExternalStorageWritable()) {
+            Toast.makeText(context, "external unwritable", Toast.LENGTH_LONG).show()
+        }
+
+        return view
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
+        visitorViewModel?.initialize(context!!)
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        email = Email()
+        excelWorkSheet = ExcelWorkSheet(context)
+
+        excelWorkSheet?.addVisitors(visitorViewModel!!.getVisitors()!!.value)
+
+        email?.addresses = listOf("kitso.namane@studentmail.biust.ac.bw").toTypedArray()
+        email?.file = excelWorkSheet?.getFile()
+        email?.message = "Here are all your visitors"
+        email?.subject = "Today's Visitor Log Registry"
+        val emailIntent = email?.composeEmail()
+
+        if (emailIntent?.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(emailIntent)
+        }
     }
 
     companion object {

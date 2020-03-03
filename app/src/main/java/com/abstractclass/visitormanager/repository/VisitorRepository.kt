@@ -19,7 +19,9 @@ class VisitorRepository(context: Context) {
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
 // that you're not doing any long running operations on the main thread, blocking the UI.
     suspend fun addVisitor(visitor: Visitor?) {
-        visitorDao?.addVisitor(visitor)
+        VisitorAppDatabase.databaseWriteExecutor.execute {
+            visitorDao?.addVisitor(visitor)
+        }
         //VisitorAppDatabase.Companion.databaseWriteExecutor.execute(Runnable { visitorDao?.addVisitor(visitor) })
     }
 
@@ -28,9 +30,9 @@ class VisitorRepository(context: Context) {
     }
 
     // Note that in order to unit test the WordRepository, you have to remove the Application
-// dependency. This adds complexity and much more code, and this sample is not about testing.
-// See the BasicSample in the android-architecture-components repository at
-// https://github.com/googlesamples
+    // dependency. This adds complexity and much more code, and this sample is not about testing.
+    // See the BasicSample in the android-architecture-components repository at
+    // https://github.com/googlesamples
     init {
         val db: VisitorAppDatabase? = VisitorAppDatabase.Companion.getDatabase(context)
         visitorDao = db?.visitorDao()

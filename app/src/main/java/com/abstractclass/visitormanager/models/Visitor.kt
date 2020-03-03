@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.abstractclass.visitormanager.utils.Utils
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -12,9 +13,9 @@ data class Visitor (
    @PrimaryKey(autoGenerate = false)
     var id: Int? = null,
 
-    @Embedded
-    @SerializedName("person")
-    var person: Person? = null,
+   @SerializedName("person")
+   @Embedded
+   var person: Person? = null,
 
     @ColumnInfo(name = "phone_number")
     @SerializedName("phone_number")
@@ -36,7 +37,16 @@ data class Visitor (
     @SerializedName("time_out")
     var timeOut: Long? = null
 
-) : Serializable
+) : Serializable {
+    fun toList() : List<String> {
+        //"First Name", "Last Name", "National ID", "Phone Number", "Birthdate", "Gender", "Time In", "Purpose",
+        //"Plate Number", "Time Out"
+        return listOf(
+                person?.firstName!!, person?.lastName!!, person?.nationalId!!, phone!!, Utils.timeStampToString(person?.birthDate!!),
+                person?.sex!!, Utils.timeStampToString(timeIn!!), purpose!!, Utils.timeStampToString(timeOut!!)
+        )
+    }
+}
 
 /**
 @Entity(tableName = "visitor_table")

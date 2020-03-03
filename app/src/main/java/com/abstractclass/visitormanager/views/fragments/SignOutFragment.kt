@@ -21,7 +21,9 @@ import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.text_recognition.MRZImangeAnalyzer
+import com.abstractclass.visitormanager.utils.Utils
 import com.abstractclass.visitormanager.view_models.MRZViewModel
+import com.abstractclass.visitormanager.view_models.VisitorViewModel
 import java.util.concurrent.Executors
 
 // TODO: Rename parameter arguments, choose names that match
@@ -41,9 +43,9 @@ class SignOutFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private var visitorViewModel: VisitorViewModel? = null
     private var mrzViewModel: MRZViewModel? = null
     private var mrzDecoder: FrameLayout? = null
-    private var parentView: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,7 +105,7 @@ class SignOutFragment : Fragment() {
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
         // version 1.1.0 or higher.
-        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
+        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {
@@ -156,14 +158,18 @@ class SignOutFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         mrzViewModel = ViewModelProvider(requireActivity()).get(MRZViewModel::class.java)
-
+        visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
+        visitorViewModel?.initialize(context!!)
         //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         mrzViewModel?.getPerson()?.observe(viewLifecycleOwner, Observer<Person?> { person ->
             if(person != null) {
                 Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
+                val visitor = visitorViewModel?.getVisitor(person.nationalId!!)
+                visitor?.timeOut = Utils.getCurrentTime()
+                visitorViewModel?.addVisitor(visitor)
                 //val actionPerson = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(person)
-                //MainActivity.navController?.navigate(actionPerson)
+                MainActivity.navController?.navigate(ReportsFragmentDirections.actionReports())
             }
         })
 

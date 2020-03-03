@@ -43,8 +43,6 @@ class SignInFragment : Fragment() {
 
     private var mrzViewModel: MRZViewModel? = null
     private var mrzDecoder: FrameLayout? = null
-    private var parentView: View? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,7 +99,7 @@ class SignInFragment : Fragment() {
         // Bind use cases to lifecycle
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
-        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
+        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {
