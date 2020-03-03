@@ -11,6 +11,10 @@ class Globals {
         const val REQUEST_CODE_PERMISSIONS = 10
 
         // This is an array of all the permission specified in the manifest.
-        val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        val FILE_READ_WRITE_PERMISSIONS: Array<String> = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 }

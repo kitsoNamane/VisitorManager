@@ -15,10 +15,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.abstractclass.visitormanager.Globals
 import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.text_recognition.MRZImangeAnalyzer
+import com.abstractclass.visitormanager.utils.Utils
 import com.abstractclass.visitormanager.view_models.MRZViewModel
 import java.util.concurrent.Executors
 
@@ -143,7 +145,7 @@ class PhotoIdFragment : Fragment() {
      */
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+        if (requestCode == Globals.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 viewFinder.post { startCamera() }
             } else {
@@ -158,7 +160,7 @@ class PhotoIdFragment : Fragment() {
     /**
      * Check if all permission specified in the manifest have been granted
      */
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+    private fun allPermissionsGranted() = Globals.REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
                 requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
@@ -183,7 +185,7 @@ class PhotoIdFragment : Fragment() {
             viewFinder.post { startCamera() }
         } else {
             ActivityCompat.requestPermissions(
-                    this.requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+                    this.requireActivity(), Globals.REQUIRED_PERMISSIONS, Globals.REQUEST_CODE_PERMISSIONS)
         }
 
         // Every time the provided texture view changes, recompute layout

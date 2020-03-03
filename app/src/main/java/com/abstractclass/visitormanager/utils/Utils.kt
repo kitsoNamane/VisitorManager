@@ -1,6 +1,10 @@
 package com.abstractclass.visitormanager.utils
 
+import android.content.Context
 import android.os.Environment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -39,5 +43,21 @@ class Utils {
                     setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
         }
 
+        fun createFile(context: Context, filename: String) : File {
+            val rootDir = File(context.filesDir, "visitors_logs")
+            if (!rootDir.exists()) {
+                rootDir.mkdir()
+            }
+            val file = File(rootDir, filename)
+            return file
+        }
+
+        fun refreshFragment(activity: FragmentActivity, fragment: Fragment) {
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .detach(fragment)
+                    .attach(fragment)
+                    .commit()
+        }
     }
 }

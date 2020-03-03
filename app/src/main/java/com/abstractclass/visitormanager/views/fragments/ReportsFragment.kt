@@ -1,17 +1,27 @@
 package com.abstractclass.visitormanager.views.fragments
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.abstractclass.visitormanager.Globals
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.reports.ExcelWorkSheet
 import com.abstractclass.visitormanager.utils.Email
-import com.abstractclass.visitormanager.utils.Utils
 import com.abstractclass.visitormanager.view_models.VisitorViewModel
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -32,6 +42,9 @@ class ReportsFragment : Fragment() {
     private var excelWorkSheet: ExcelWorkSheet? = null
     private var email: Email? = null
     private var visitorViewModel: VisitorViewModel? = null
+    private var sendEmailBtn: MaterialButton? = null
+    private var emailTextInput: TextInputEditText? = null
+    private var isEmailEntered: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,32 +58,77 @@ class ReportsFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_reports, container, false)
-        if(Utils.isExternalStorageReadable()) {
-            Toast.makeText(context, "external unreadable", Toast.LENGTH_LONG).show()
-        }
-        if(Utils.isExternalStorageWritable()) {
-            Toast.makeText(context, "external unwritable", Toast.LENGTH_LONG).show()
-        }
+        sendEmailBtn = view.findViewById(R.id.send_email)
+        emailTextInput = view.findViewById(R.id.email_text)
 
+        emailTextInput?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                if(s.length > 0) {
+                    enableButton(true)
+                } else {
+                    enableButton(false)
+                }
+            }
+        })
         return view
+    }
+
+    private fun enableButton(enabled: Boolean) {
+        sendEmailBtn?.setOnClickListener(View.OnClickListener {
+            if(enabled)  {
+                sendEmail()
+            } else {
+                Snackbar.make(getView()!!, "Please enter an email address", Snackbar.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    /**
+     * Check if all permission specified in the manifest have been granted
+     */
+    private fun allPermissionsGranted() = Globals.FILE_READ_WRITE_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(
+                requireContext(), it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == Globals.REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
+            } else {
+                Toast.makeText(this.context,
+                        "Permissions not granted by the user.",
+                        Toast.LENGTH_SHORT).show()
+                activity?.finish()
+            }
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
         visitorViewModel?.initialize(context!!)
-
         email = Email()
+
+        if (!allPermissionsGranted()) {
+            ActivityCompat.requestPermissions(
+                    this.requireActivity(), Globals.FILE_READ_WRITE_PERMISSIONS, Globals.REQUEST_CODE_PERMISSIONS)
+        }
+    }
+
+    private fun sendEmail() {
         excelWorkSheet = ExcelWorkSheet(context)
-
         excelWorkSheet?.addVisitors(visitorViewModel!!.getVisitors()!!.value)
-
+        visitorViewModel!!.getVisitors()!!.value?.forEach { visitor->
+           Log.d("AppData", visitor.toString())
+        }
         email?.addresses = listOf("kitso.namane@studentmail.biust.ac.bw").toTypedArray()
         email?.file = excelWorkSheet?.getFile()
         email?.message = "Here are all your visitors"
         email?.subject = "Today's Visitor Log Registry"
         val emailIntent = email?.composeEmail()
-
         if (emailIntent?.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(emailIntent)
         }

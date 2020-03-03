@@ -1,15 +1,15 @@
 package com.abstractclass.visitormanager.reports
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.net.Uri
-import androidx.core.net.toUri
 import com.abstractclass.visitormanager.models.Visitor
 import com.abstractclass.visitormanager.utils.Utils
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
+import java.io.File
+import java.io.FileOutputStream
 
 class ExcelWorkSheet(context: Context?) {
     private var workbook: Workbook? = null
@@ -18,12 +18,13 @@ class ExcelWorkSheet(context: Context?) {
     private var workSheetCells: List<String>? = null
 
     private var filename: String? = null
+    private var file: File? = null
 
     private fun initSheet() {
         workbook = HSSFWorkbook()
         filename = Utils.getISODate()
-        val outputStream = context?.openFileOutput(filename, MODE_PRIVATE)
-        sheet = workbook?.createSheet("Visitor_Log_$filename")
+        file = File(context?.getExternalFilesDir(null), "Visitor-Log-$filename")
+        sheet = workbook?.createSheet("Visitor Log $filename")
     }
 
     private fun createSheet() {
@@ -46,13 +47,14 @@ class ExcelWorkSheet(context: Context?) {
     }
 
     private fun saveWorkSheet() {
-        val output = context?.openFileOutput(filename, MODE_PRIVATE)
+        //val output = context?.openFileOutput(filename, MODE_PRIVATE)
+        val output = FileOutputStream(file!!)
         workbook?.write(output)
-        output?.close()
+        output.close()
     }
 
     fun getFile() : Uri {
-        return filename?.toUri()!!
+        return Uri.fromFile(file)
     }
 
     init {
