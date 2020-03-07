@@ -6,36 +6,36 @@
     android:layout_height="match_parent"
     tools:context=".views.fragments.WelcomeFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/sign_in"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
+            android:layout_weight="0.5"
             android:text="@string/sign_in"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toTopOf="@+id/sign_out"
-            app:layout_constraintEnd_toEndOf="@+id/sign_out"
-            app:layout_constraintStart_toStartOf="@+id/sign_out" />
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            app:backgroundTint="#9AE458" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/sign_out"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
+            android:layout_weight="0.5"
             android:text="@string/sign_out"
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            app:backgroundTint="#84E2F3" />
+    </LinearLayout>
 </FrameLayout>

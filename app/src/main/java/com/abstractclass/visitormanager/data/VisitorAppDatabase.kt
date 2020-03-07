@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.abstractclass.visitormanager.models.Visitor
 import java.util.concurrent.Executors
 
-@Database(entities = [Visitor::class], version = 1, exportSchema = false)
+@Database(entities = [Visitor::class], version = 2, exportSchema = false)
 abstract class VisitorAppDatabase : RoomDatabase() {
     abstract fun visitorDao(): VisitorDao?
 
@@ -28,7 +28,9 @@ abstract class VisitorAppDatabase : RoomDatabase() {
                         context.applicationContext,
                         VisitorAppDatabase::class.java,
                         "visitor_app_db"
-                ).allowMainThreadQueries().build()
+                ).allowMainThreadQueries()
+                        .fallbackToDestructiveMigration()
+                        .build()
                 INSTANCE = instance
                 return instance
             }

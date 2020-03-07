@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -61,12 +62,15 @@ class ReportsFragment : Fragment() {
         sendEmailBtn = view.findViewById(R.id.send_email)
         emailTextInput = view.findViewById(R.id.email_text)
 
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
+        (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Reports"
         emailTextInput?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
                 if(s.length > 0) {
                     enableButton(true)
+                    email?.addresses = arrayOf(s.toString())
                 } else {
                     enableButton(false)
                 }
@@ -124,7 +128,8 @@ class ReportsFragment : Fragment() {
         visitorViewModel!!.getVisitors()!!.value?.forEach { visitor->
            Log.d("AppData", visitor.toString())
         }
-        email?.addresses = listOf("kitso.namane@studentmail.biust.ac.bw").toTypedArray()
+        email?.addresses = arrayOf(emailTextInput?.text.toString())
+        //listOf("kitso.namane@studentmail.biust.ac.bw").toTypedArray()
         email?.file = excelWorkSheet?.getFile()
         email?.message = "Here are all your visitors"
         email?.subject = "Today's Visitor Log Registry"

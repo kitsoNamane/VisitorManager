@@ -14,6 +14,10 @@ interface VisitorDao {
     @Query("SELECT * FROM visitor_table ORDER BY time_in ASC")
     fun getAllVisitors(): LiveData<List<Visitor?>>?
 
-    @Query("SELECT * FROM visitor_table WHERE national_id = :nationalId ORDER BY time_in LIMIT 1")
+    @Query("SELECT * FROM visitor_table WHERE national_id = :nationalId ORDER BY id LIMIT 1")
     fun getVisitor(nationalId: String): Visitor
+
+    @Query("UPDATE visitor_table SET time_out= :timeOut WHERE id= :id")
+    fun signOut(timeOut : Long, id : Int)
+
 }

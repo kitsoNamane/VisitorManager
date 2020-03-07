@@ -15,14 +15,13 @@ class MRZViewModel : ViewModel() {
         if (mrtd?.isValidTD1(textblock)!!) {
             return@switchMap mrtd.getPerson()
         } else {
-            mrtd.resetPerson()
+            return@switchMap mrtd.resetPerson()
         }
     }
 
     fun setTextblock(text: String?) {
         textblock?.setValue(text)
     }
-
 
     fun getPerson(): LiveData<Person?>? {
         return person

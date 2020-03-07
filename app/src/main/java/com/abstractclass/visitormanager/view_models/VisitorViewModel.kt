@@ -23,6 +23,10 @@ class VisitorViewModel : ViewModel() {
         return visitorRepository?.findVisitor(id)!!
     }
 
+    fun signOut(timeOut : Long, id : Int) {
+        visitorRepository?.signOut(timeOut, id)
+    }
+
     fun addVisitor(visitor: Visitor?) {
         GlobalScope.launch {
             visitorRepository?.addVisitor(visitor)

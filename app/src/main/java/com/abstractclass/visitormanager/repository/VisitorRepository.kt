@@ -25,8 +25,16 @@ class VisitorRepository(context: Context) {
         //VisitorAppDatabase.Companion.databaseWriteExecutor.execute(Runnable { visitorDao?.addVisitor(visitor) })
     }
 
-    fun findVisitor(id: String) : Visitor {
-        return visitorDao?.getVisitor(id)!!
+    fun signOut(timeOut : Long, id : Int) {
+        visitorDao?.signOut(timeOut, id)
+    }
+
+    fun findVisitor(id: String) : Visitor? {
+        val visitor = visitorDao?.getVisitor(id)!!
+        if(visitor == null) {
+            return null
+        }
+        return visitor
     }
 
     // Note that in order to unit test the WordRepository, you have to remove the Application

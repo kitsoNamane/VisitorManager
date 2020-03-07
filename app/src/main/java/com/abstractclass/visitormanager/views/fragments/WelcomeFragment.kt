@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
@@ -41,6 +42,9 @@ class WelcomeFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_welcome, container, false)
+
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
+        (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Select Scan"
         signIn = view.findViewById(R.id.sign_in)
         signOut = view.findViewById(R.id.sign_out)
 

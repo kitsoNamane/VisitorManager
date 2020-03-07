@@ -16,11 +16,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.abstractclass.visitormanager.Globals
-import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.text_recognition.MRZImangeAnalyzer
+import com.abstractclass.visitormanager.utils.Utils
 import com.abstractclass.visitormanager.view_models.MRZViewModel
 import java.util.concurrent.Executors
 
@@ -55,7 +56,7 @@ class SignInFragment : Fragment() {
             viewFinder.post {
                 Log.d("ScanID", "Back Button Pressed")
                 CameraX.unbindAll()
-                MainActivity.navController!!.popBackStack()
+                Navigation.findNavController(getView()!!).popBackStack()
             }
         }
     }
@@ -160,7 +161,12 @@ class SignInFragment : Fragment() {
                 Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
                 //val actionPerson = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(person)
                 val actionPerson = SignInFragmentDirections.actionPhotoId(person)
-                MainActivity.navController?.navigate(actionPerson)
+                viewFinder.post {
+                    mrzViewModel?.setTextblock("reset person ${Utils.getCurrentTime().toString()}")
+                    CameraX.unbindAll()
+                    Log.d("AppData", "back button override")
+                    Navigation.findNavController(getView()!!).navigate(actionPerson)
+                }
             }
         })
 
@@ -187,6 +193,14 @@ class SignInFragment : Fragment() {
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Sign In"
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
+        val toolbar : androidx.appcompat.widget.Toolbar?  = view.findViewById(R.id.toolbar)
+        toolbar?.setNavigationOnClickListener {
+            viewFinder.post {
+                CameraX.unbindAll()
+                Log.d("AppData", "back button override")
+                activity?.onBackPressed()
+            }
+        }
         return view
     }
 

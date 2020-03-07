@@ -16,8 +16,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.abstractclass.visitormanager.Globals
-import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.text_recognition.MRZImangeAnalyzer
@@ -59,7 +59,7 @@ class SignOutFragment : Fragment() {
             viewFinder.post {
                 Log.d("ScanID", "Back Button Pressed")
                 CameraX.unbindAll()
-                MainActivity.navController?.popBackStack()
+                Navigation.findNavController(getView()!!).popBackStack()
             }
         }
     }
@@ -160,16 +160,22 @@ class SignOutFragment : Fragment() {
         mrzViewModel = ViewModelProvider(requireActivity()).get(MRZViewModel::class.java)
         visitorViewModel = ViewModelProvider(this).get(VisitorViewModel::class.java)
         visitorViewModel?.initialize(context!!)
-        //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         mrzViewModel?.getPerson()?.observe(viewLifecycleOwner, Observer<Person?> { person ->
             if(person != null) {
                 Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
                 val visitor = visitorViewModel?.getVisitor(person.nationalId!!)
-                visitor?.timeOut = Utils.getCurrentTime()
-                visitorViewModel?.addVisitor(visitor)
-                //val actionPerson = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(person)
-                MainActivity.navController?.navigate(ReportsFragmentDirections.actionReports())
+                if(visitor != null) {
+                    //visitor?.timeOut = Utils.getCurrentTime()
+                    val timeOut = Utils.getCurrentTime()
+                    visitorViewModel?.signOut(timeOut, visitor?.id!!)
+                    //visitorViewModel?.addVisitor(visitor)
+                }
+                viewFinder.post {
+                    mrzViewModel?.setTextblock("reset person ${Utils.getCurrentTime().toString()}")
+                    CameraX.unbindAll()
+                    Navigation.findNavController(getView()!!).popBackStack()
+                }
             }
         })
 
@@ -195,6 +201,15 @@ class SignOutFragment : Fragment() {
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Sign Out"
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
+
+        val toolbar : androidx.appcompat.widget.Toolbar?  = view.findViewById(R.id.toolbar)
+        toolbar?.setNavigationOnClickListener {
+            viewFinder.post {
+                CameraX.unbindAll()
+                Log.d("AppData", "back button override")
+                activity?.onBackPressed()
+            }
+        }
         return view
     }
 

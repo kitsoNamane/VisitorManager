@@ -10,7 +10,7 @@ import java.io.Serializable
 
 @Entity(tableName = "visitor_table")
 data class Visitor (
-   @PrimaryKey(autoGenerate = false)
+   @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
 
    @SerializedName("person")
