@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.abstractclass.visitormanager.MainActivity
+import androidx.navigation.Navigation
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.models.Visitor
@@ -109,15 +109,8 @@ class IdDecodeInfoFragment : Fragment() {
             visitor?.timeIn = Utils.getCurrentTime()
             visitorViewModel?.addVisitor(visitor)
             Toast.makeText(context, "Added Visitor", Toast.LENGTH_LONG).show()
-            /**
-            if(visitorViewModel?.getVisitor(person?.nationalId!!) == null) {
-                Toast.makeText(context, "Added Visitor", Toast.LENGTH_LONG).show()
-            } else if(visitorViewModel?.getVisitor(person?.nationalId!!)?.timeOut == null) {
-                visitorViewModel?.addVisitor(visitor)
-                Toast.makeText(context, visitorViewModel?.getVisitor(person?.nationalId!!).toString(), Toast.LENGTH_LONG).show()
-            }
-            */
-            MainActivity.navController?.navigate(ReportsFragmentDirections.actionReports())
+            Navigation.findNavController(getView()!!).popBackStack()
+            //MainActivity.navController?.navigate(ReportsFragmentDirections.actionReports())
         })
 
         phoneNumber?.addTextChangedListener(object : TextWatcher {
@@ -126,7 +119,7 @@ class IdDecodeInfoFragment : Fragment() {
             override fun afterTextChanged(s: Editable) {
                 if (s.length > 0) {
                     visitor?.phone = s.toString()
-                    MainActivity.navController?.navigate(ReportsFragmentDirections.actionReports())
+                    Navigation.findNavController(activity!!, R.id.nav_host_fragment).navigate(ReportsFragmentDirections.actionReports())
                 }
             }
         })

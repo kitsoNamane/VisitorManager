@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         val toolbar : androidx.appcompat.widget.Toolbar?  = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar!!)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val navView : BottomNavigationView? = findViewById(R.id.bottom_nav)
         navView!!.setOnNavigationItemReselectedListener { item: MenuItem? -> }
         NavigationUI.setupActionBarWithNavController(this, navController!!)

@@ -105,7 +105,7 @@ class SignOutFragment : Fragment() {
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
         // version 1.1.0 or higher.
-        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
+        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {
@@ -202,16 +202,33 @@ class SignOutFragment : Fragment() {
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
 
-        val toolbar : androidx.appcompat.widget.Toolbar?  = view.findViewById(R.id.toolbar)
+        /**
+        val toolbar : androidx.appcompat.widget.Toolbar?  = activity?.findViewById(R.id.toolbar)
         toolbar?.setNavigationOnClickListener {
             viewFinder.post {
                 CameraX.unbindAll()
                 Log.d("AppData", "back button override")
-                activity?.onBackPressed()
+                Navigation.findNavController(activity!!, R.id.nav_host_fragment).popBackStack()
             }
         }
+        */
         return view
     }
+
+    override public fun onOptionsItemSelected(item : MenuItem) : Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                viewFinder.post{
+                    CameraX.unbindAll()
+                    Log.d("AppData", "Can we do this please")
+                    Navigation.findNavController(getView()!!).popBackStack()
+                }
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
     companion object {
         /**
