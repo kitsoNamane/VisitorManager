@@ -77,9 +77,9 @@ class MRTD {
         // gender
         val gender = group?.get(7).toString()
 
-        if (gender?.toLowerCase() == "m") {
+        if (gender.toLowerCase() == "m") {
             person?.sex = "male"
-        } else if (gender?.toLowerCase() == "f") {
+        } else if (gender.toLowerCase() == "f") {
             person?.sex = "female"
         } else {
             person?.sex = "undefined"

@@ -54,8 +54,6 @@ class IdDecodeInfoFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
         person = arguments?.let { IdDecodeInfoFragmentArgs.fromBundle(it).person }
-        //imagePath = arguments?.let { IdDecodeInfoFragmentArgs.fromBundle(it).imagePath }
-        //imageUri = Uri.fromFile(File(imagePath))
         visitor = Visitor()
 
     }
@@ -93,7 +91,6 @@ class IdDecodeInfoFragment : Fragment() {
         plateNumber = view.findViewById(R.id.plate_number_text)
         addVisitor = view.findViewById(R.id.add_btn)
 
-
         // T save to DataBase, create Visitor object, add person object to it and save to
         // database.
         return view;
@@ -110,7 +107,6 @@ class IdDecodeInfoFragment : Fragment() {
             visitorViewModel?.addVisitor(visitor)
             Toast.makeText(context, "Added Visitor", Toast.LENGTH_LONG).show()
             Navigation.findNavController(getView()!!).popBackStack()
-            //MainActivity.navController?.navigate(ReportsFragmentDirections.actionReports())
         })
 
         phoneNumber?.addTextChangedListener(object : TextWatcher {
@@ -119,7 +115,6 @@ class IdDecodeInfoFragment : Fragment() {
             override fun afterTextChanged(s: Editable) {
                 if (s.length > 0) {
                     visitor?.phone = s.toString()
-                    Navigation.findNavController(activity!!, R.id.nav_host_fragment).navigate(ReportsFragmentDirections.actionReports())
                 }
             }
         })

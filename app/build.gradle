@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'androidx.navigation.safeargs'
-
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -100,6 +99,6 @@ dependencies {
     releaseImplementation 'com.idescout.sql:sqlscout-server-noop:4.1'
 
     //Debug tools
-    compile 'com.facebook.stetho:stetho:1.5.1'
-    compile 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    //compile 'com.facebook.stetho:stetho:1.5.1'
+    //compile 'com.facebook.stetho:stetho-okhttp3:1.5.1'
 }

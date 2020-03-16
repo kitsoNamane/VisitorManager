@@ -39,8 +39,8 @@ class ExcelWorkSheet(context: Context?) {
         visitors?.forEachIndexed { index, visitor ->
             // get the last row of worksheet
             row = sheet?.createRow(index + 1)
-            visitor?.toList()?.forEachIndexed {index, s ->
-                row?.createCell(index)?.setCellValue(s)
+            visitor?.toList()?.forEachIndexed {visitorIndex, s ->
+                row?.createCell(visitorIndex)?.setCellValue(s)
             }
         }
         saveWorkSheet()

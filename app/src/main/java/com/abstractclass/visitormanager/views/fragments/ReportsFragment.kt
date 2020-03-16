@@ -2,6 +2,7 @@ package com.abstractclass.visitormanager.views.fragments
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -18,6 +19,7 @@ import com.abstractclass.visitormanager.Globals
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.reports.ExcelWorkSheet
 import com.abstractclass.visitormanager.utils.Email
+import com.abstractclass.visitormanager.utils.Utils
 import com.abstractclass.visitormanager.view_models.VisitorViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
@@ -81,10 +83,22 @@ class ReportsFragment : Fragment() {
 
     private fun enableButton(enabled: Boolean) {
         sendEmailBtn?.setOnClickListener(View.OnClickListener {
-            if(enabled)  {
-                sendEmail()
+            if(!enabled)  {
+                Snackbar.make(view!!,
+                        "Please enter an email address", Snackbar.LENGTH_LONG).show()
+                return@OnClickListener
+            }
+            if(!Utils.isOnline(context!!)) {
+                Snackbar.make(view!!,
+                        "Please connnect WiFi/Internet to send email immediately",
+                        Snackbar.LENGTH_LONG)
+                        .show()
+                val handler : Handler? = Handler()
+                handler?.postDelayed(Runnable {
+                    sendEmail()
+                }, 2000)
             } else {
-                Snackbar.make(getView()!!, "Please enter an email address", Snackbar.LENGTH_LONG).show()
+                sendEmail()
             }
         })
     }
@@ -100,8 +114,7 @@ class ReportsFragment : Fragment() {
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == Globals.REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-            } else {
+            if (!allPermissionsGranted()) {
                 Toast.makeText(this.context,
                         "Permissions not granted by the user.",
                         Toast.LENGTH_SHORT).show()

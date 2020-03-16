@@ -41,6 +41,8 @@ class SignInFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private val cameraExecutor = Executors.newSingleThreadExecutor()
+    private lateinit var viewFinder: TextureView
 
     private var mrzViewModel: MRZViewModel? = null
     private var mrzDecoder: FrameLayout? = null
@@ -53,16 +55,13 @@ class SignInFragment : Fragment() {
         }
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this, true) {
-            viewFinder.post {
-                Log.d("ScanID", "Back Button Pressed")
-                CameraX.unbindAll()
-                Navigation.findNavController(getView()!!).popBackStack()
+            //stopCamera()
+            viewFinder.post{
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack()
             }
         }
     }
 
-    private val executor = Executors.newSingleThreadExecutor()
-    private lateinit var viewFinder: TextureView
 
     private fun startCamera() {
         val analyzerConfig = ImageAnalysisConfig.Builder().apply {
@@ -73,7 +72,7 @@ class SignInFragment : Fragment() {
         }.build()
 
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, MRZImangeAnalyzer(mrzViewModel))
+            setAnalyzer(cameraExecutor, MRZImangeAnalyzer(mrzViewModel))
         }
 
         // Create configuration object for the viewfinder use case
@@ -81,25 +80,28 @@ class SignInFragment : Fragment() {
             setTargetResolution(Size(640, 480))
         }.build()
 
-
         // Build the viewfinder use case
         val preview = Preview(previewConfig)
 
         // Every time the viewfinder is updated, recompute layout
         preview.setOnPreviewOutputUpdateListener {
-
             // To update the SurfaceTexture, we have to remove it and re-add it
             val parent = viewFinder.parent as ViewGroup
             parent.removeView(viewFinder)
             parent.addView(viewFinder, 0)
 
             viewFinder.surfaceTexture = it.surfaceTexture
+            //viewFinder.surfaceTextureListener.onSurfaceTextureDestroyed(it.surfaceTexture)
             updateTransform()
         }
 
         // Bind use cases to lifecycle
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
+        CameraX.unbindAll()
+        CameraX.ErrorListener { error, message ->
+            Log.d("AppData", error.name+" : "+message)
+        }
         CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
@@ -134,10 +136,12 @@ class SignInFragment : Fragment() {
             if (allPermissionsGranted()) {
                 viewFinder.post { startCamera() }
             } else {
+                viewFinder.post {
                 Toast.makeText(this.context,
                         "Permissions not granted by the user.",
                         Toast.LENGTH_SHORT).show()
                 activity?.finish()
+                }
             }
         }
     }
@@ -154,29 +158,27 @@ class SignInFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         mrzViewModel = ViewModelProvider(requireActivity()).get(MRZViewModel::class.java)
 
-        //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-
         mrzViewModel?.getPerson()?.observe(viewLifecycleOwner, Observer<Person?> { person ->
             if(person != null) {
                 Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
                 //val actionPerson = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(person)
                 val actionPerson = SignInFragmentDirections.actionPhotoId(person)
+                mrzViewModel?.setTextblock("reset person ${Utils.getCurrentTime().toString()}")
                 viewFinder.post {
-                    mrzViewModel?.setTextblock("reset person ${Utils.getCurrentTime().toString()}")
                     CameraX.unbindAll()
-                    Log.d("AppData", "back button override")
                     Navigation.findNavController(getView()!!).navigate(actionPerson)
                 }
             }
         })
 
-
         // Request camera permissions
         if (allPermissionsGranted()) {
             viewFinder.post { startCamera() }
         } else {
+            viewFinder.post {
             ActivityCompat.requestPermissions(
                     this.requireActivity(), Globals.REQUIRED_PERMISSIONS, Globals.REQUEST_CODE_PERMISSIONS)
+            }
         }
 
         // Every time the provided texture view changes, recompute layout
@@ -188,38 +190,25 @@ class SignInFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        var view =  inflater.inflate(R.layout.fragment_sign_in, container, false)
+        val view =  inflater.inflate(R.layout.fragment_sign_in, container, false)
+        setHasOptionsMenu(true);
         (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Sign In"
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
-        /**
-        val toolbar : androidx.appcompat.widget.Toolbar?  = activity?.findViewById(R.id.toolbar)
-        toolbar?.setNavigationOnClickListener {
-            viewFinder.post {
-                CameraX.unbindAll()
-                Log.d("AppData", "back button override")
-                Navigation.findNavController(activity!!, R.id.nav_host_fragment).popBackStack()
-            }
-        }
-        */
         return view
     }
 
-    override public fun onOptionsItemSelected(item : MenuItem) : Boolean {
+    public override fun onOptionsItemSelected(item : MenuItem) : Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                viewFinder.post{
-                    Log.d("AppData", "Can we do this please")
-                    CameraX.unbindAll()
-                    Navigation.findNavController(getView()!!).popBackStack()
-                }
+                Navigation.findNavController(view!!).popBackStack()
+                //stopCamera()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
     }
-
 
     companion object {
         /**
@@ -239,5 +228,23 @@ class SignInFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun stopCamera() {
+        cameraExecutor.shutdown()
+        CameraX.unbindAll()
+        Log.d("AppData", "Exiting Fragment from back button")
+        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(WelcomeFragmentDirections.actionWelcome())
+        //viewFinder.post {
+        //}
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewFinder.post {
+        cameraExecutor.shutdown()
+        CameraX.unbindAll()
+        Log.d("AppData", "Destroying Fragment from back button")
+        }
     }
 }

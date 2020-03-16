@@ -58,13 +58,14 @@ class SignOutFragment : Fragment() {
             // Handle the back button event
             viewFinder.post {
                 Log.d("ScanID", "Back Button Pressed")
-                CameraX.unbindAll()
-                Navigation.findNavController(getView()!!).popBackStack()
+                Navigation.findNavController(requireActivity()!!, R.id.nav_host_fragment
+                ).popBackStack()
+                //stopCamera()
             }
         }
     }
 
-    private val executor = Executors.newSingleThreadExecutor()
+    private val cameraExecutor = Executors.newSingleThreadExecutor()
     private lateinit var viewFinder: TextureView
 
     private fun startCamera() {
@@ -77,7 +78,7 @@ class SignOutFragment : Fragment() {
         }.build()
 
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, MRZImangeAnalyzer(mrzViewModel))
+            setAnalyzer(cameraExecutor, MRZImangeAnalyzer(mrzViewModel))
         }
 
         // Create configuration object for the viewfinder use case
@@ -91,20 +92,20 @@ class SignOutFragment : Fragment() {
 
         // Every time the viewfinder is updated, recompute layout
         preview.setOnPreviewOutputUpdateListener {
-
             // To update the SurfaceTexture, we have to remove it and re-add it
             val parent = viewFinder.parent as ViewGroup
             parent.removeView(viewFinder)
             parent.addView(viewFinder, 0)
-
             viewFinder.surfaceTexture = it.surfaceTexture
             updateTransform()
         }
+
 
         // Bind use cases to lifecycle
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
         // version 1.1.0 or higher.
+        CameraX.unbindAll()
         CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
@@ -139,10 +140,12 @@ class SignOutFragment : Fragment() {
             if (allPermissionsGranted()) {
                 viewFinder.post { startCamera() }
             } else {
+                viewFinder.post{
                 Toast.makeText(this.context,
                         "Permissions not granted by the user.",
                         Toast.LENGTH_SHORT).show()
                 activity?.finish()
+                }
             }
         }
     }
@@ -163,12 +166,14 @@ class SignOutFragment : Fragment() {
 
         mrzViewModel?.getPerson()?.observe(viewLifecycleOwner, Observer<Person?> { person ->
             if(person != null) {
-                Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
+                viewFinder.post{
+                    Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
+                }
                 val visitor = visitorViewModel?.getVisitor(person.nationalId!!)
                 if(visitor != null) {
                     //visitor?.timeOut = Utils.getCurrentTime()
                     val timeOut = Utils.getCurrentTime()
-                    visitorViewModel?.signOut(timeOut, visitor?.id!!)
+                    visitorViewModel?.signOut(timeOut, visitor.id!!)
                     //visitorViewModel?.addVisitor(visitor)
                 }
                 viewFinder.post {
@@ -197,38 +202,41 @@ class SignOutFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_sign_out, container, false)
+        setHasOptionsMenu(true);
         (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Sign Out"
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
-
-        /**
-        val toolbar : androidx.appcompat.widget.Toolbar?  = activity?.findViewById(R.id.toolbar)
-        toolbar?.setNavigationOnClickListener {
-            viewFinder.post {
-                CameraX.unbindAll()
-                Log.d("AppData", "back button override")
-                Navigation.findNavController(activity!!, R.id.nav_host_fragment).popBackStack()
-            }
-        }
-        */
         return view
     }
 
-    override public fun onOptionsItemSelected(item : MenuItem) : Boolean {
+    public override fun onOptionsItemSelected(item : MenuItem) : Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                viewFinder.post{
-                    CameraX.unbindAll()
-                    Log.d("AppData", "Can we do this please")
-                    Navigation.findNavController(getView()!!).popBackStack()
-                }
+                Navigation.findNavController(view!!).popBackStack()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
+    private fun stopCamera() {
+        cameraExecutor.shutdown()
+        CameraX.unbindAll()
+        Log.d("AppData", "Exiting Fragment from back button")
+        Navigation.findNavController(view!!).navigate(WelcomeFragmentDirections.actionWelcome())
+        //viewFinder.post {
+        //}
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewFinder.post {
+        cameraExecutor.shutdown()
+        CameraX.unbindAll()
+        Log.d("AppData", "Destroying Fragment from back button")
+        }
+    }
 
     companion object {
         /**
