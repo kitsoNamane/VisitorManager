@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.models.Visitor
@@ -63,7 +64,7 @@ class IdDecodeInfoFragment : Fragment() {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_id_decode_info, container, false)
 
-        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "VSnap"
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "ID Verification"
 
         imageScanResult = view.findViewById(R.id.scan_results)
@@ -106,7 +107,7 @@ class IdDecodeInfoFragment : Fragment() {
             visitor?.timeIn = Utils.getCurrentTime()
             visitorViewModel?.addVisitor(visitor)
             Toast.makeText(context, "Added Visitor", Toast.LENGTH_LONG).show()
-            Navigation.findNavController(getView()!!).popBackStack()
+            MainActivity.navController?.popBackStack()
         })
 
         phoneNumber?.addTextChangedListener(object : TextWatcher {

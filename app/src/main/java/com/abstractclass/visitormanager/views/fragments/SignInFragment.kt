@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.abstractclass.visitormanager.Globals
+import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
 import com.abstractclass.visitormanager.models.Person
 import com.abstractclass.visitormanager.text_recognition.MRZImangeAnalyzer
@@ -55,9 +56,10 @@ class SignInFragment : Fragment() {
         }
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this, true) {
-            //stopCamera()
             viewFinder.post{
-            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack()
+                cameraExecutor.shutdown()
+                CameraX.unbindAll()
+                MainActivity.navController?.popBackStack()
             }
         }
     }
@@ -160,13 +162,12 @@ class SignInFragment : Fragment() {
 
         mrzViewModel?.getPerson()?.observe(viewLifecycleOwner, Observer<Person?> { person ->
             if(person != null) {
-                Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
-                //val actionPerson = PhotoIdFragmentDirections.actionPhotoIdFragmentToIdDecodeInfoFragment(person)
-                val actionPerson = SignInFragmentDirections.actionPhotoId(person)
-                mrzViewModel?.setTextblock("reset person ${Utils.getCurrentTime().toString()}")
                 viewFinder.post {
+                    Toast.makeText(context, person.toString(), Toast.LENGTH_LONG).show()
+                    mrzViewModel?.setTextblock("reset person ${Utils.getCurrentTime().toString()}")
+                    val actionPerson = SignInFragmentDirections.actionPhotoId(person)
                     CameraX.unbindAll()
-                    Navigation.findNavController(getView()!!).navigate(actionPerson)
+                    MainActivity.navController?.navigate(actionPerson)
                 }
             }
         })
@@ -192,7 +193,7 @@ class SignInFragment : Fragment() {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_sign_in, container, false)
         setHasOptionsMenu(true);
-        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "VSnap"
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Sign In"
         viewFinder = view.findViewById(R.id.view_finder)
         mrzDecoder = view.findViewById(R.id.decode_mrz)
@@ -202,8 +203,9 @@ class SignInFragment : Fragment() {
     public override fun onOptionsItemSelected(item : MenuItem) : Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                Navigation.findNavController(view!!).popBackStack()
-                //stopCamera()
+                cameraExecutor.shutdown()
+                CameraX.unbindAll()
+                MainActivity.navController?.popBackStack()
                 return true
             }
         }
@@ -234,11 +236,10 @@ class SignInFragment : Fragment() {
         cameraExecutor.shutdown()
         CameraX.unbindAll()
         Log.d("AppData", "Exiting Fragment from back button")
-        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(WelcomeFragmentDirections.actionWelcome())
-        //viewFinder.post {
-        //}
+        MainActivity.navController?.navigate(WelcomeFragmentDirections.actionWelcome())
     }
 
+    /**
     override fun onDestroyView() {
         super.onDestroyView()
         viewFinder.post {
@@ -247,4 +248,5 @@ class SignInFragment : Fragment() {
         Log.d("AppData", "Destroying Fragment from back button")
         }
     }
+    */
 }

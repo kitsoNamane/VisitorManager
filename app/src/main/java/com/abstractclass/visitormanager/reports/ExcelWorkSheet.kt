@@ -23,7 +23,7 @@ class ExcelWorkSheet(context: Context?) {
     private fun initSheet() {
         workbook = HSSFWorkbook()
         filename = Utils.getISODate()
-        file = File(context?.getExternalFilesDir(null), "Visitor-Log-$filename")
+        file = File(context?.getExternalFilesDir(null), "Visitor-Log-$filename.xls")
         sheet = workbook?.createSheet("Visitor Log $filename")
     }
 

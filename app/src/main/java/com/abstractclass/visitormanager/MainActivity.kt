@@ -2,6 +2,7 @@ package com.abstractclass.visitormanager
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -20,6 +21,23 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val navView : BottomNavigationView? = findViewById(R.id.bottom_nav)
         navView!!.setOnNavigationItemReselectedListener { _: MenuItem? -> }
+
+        navController?.addOnDestinationChangedListener { controller, destination, arguments ->
+            when (destination.id) {
+                R.id.signInFragment -> {
+                    navView.visibility = View.GONE
+                    toolbar?.navigationIcon = null
+                }
+                R.id.signOutFragment -> {
+                    navView.visibility = View.GONE
+                    toolbar?.navigationIcon = null
+                }
+                else -> {
+                    navView.visibility = View.VISIBLE
+                }
+            }
+
+        }
         NavigationUI.setupActionBarWithNavController(this, navController!!)
         NavigationUI.setupWithNavController(navView, navController!!);
     }

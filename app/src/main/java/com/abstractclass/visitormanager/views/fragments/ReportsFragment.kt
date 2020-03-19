@@ -64,7 +64,7 @@ class ReportsFragment : Fragment() {
         sendEmailBtn = view.findViewById(R.id.send_email)
         emailTextInput = view.findViewById(R.id.email_text)
 
-        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "VSnap"
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Reports"
         emailTextInput?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

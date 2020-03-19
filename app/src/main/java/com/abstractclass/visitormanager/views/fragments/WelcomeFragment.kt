@@ -43,7 +43,7 @@ class WelcomeFragment : Fragment() {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_welcome, container, false)
 
-        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Abstract Class"
+        (activity as AppCompatActivity?)!!.supportActionBar!!.title = "VSnap"
         (activity as AppCompatActivity?)!!.supportActionBar!!.subtitle = "Select Scan"
         signIn = view.findViewById(R.id.sign_in)
         signOut = view.findViewById(R.id.sign_out)

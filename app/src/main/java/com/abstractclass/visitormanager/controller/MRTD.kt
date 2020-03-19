@@ -18,12 +18,12 @@ class MRTD {
     }
 
     fun resetMrtdText(): MutableLiveData<String?>? {
-        mrtdText?.postValue(null)
+        mrtdText?.value = null
         return mrtdText
     }
 
     fun resetPerson(): MutableLiveData<Person?>? {
-        personMutableLiveData?.postValue(null)
+        personMutableLiveData?.value = null
         return personMutableLiveData
     }
 
@@ -77,9 +77,9 @@ class MRTD {
         // gender
         val gender = group?.get(7).toString()
 
-        if (gender.toLowerCase() == "m") {
+        if (gender.toLowerCase().equals("m")) {
             person?.sex = "male"
-        } else if (gender.toLowerCase() == "f") {
+        } else if (gender.toLowerCase().equals("f")) {
             person?.sex = "female"
         } else {
             person?.sex = "undefined"
