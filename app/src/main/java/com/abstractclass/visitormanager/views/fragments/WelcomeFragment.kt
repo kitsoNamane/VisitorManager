@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.abstractclass.visitormanager.MainActivity
 import com.abstractclass.visitormanager.R
 import com.google.android.material.button.MaterialButton
@@ -49,11 +50,11 @@ class WelcomeFragment : Fragment() {
         signOut = view.findViewById(R.id.sign_out)
 
         signIn?.setOnClickListener({
-            MainActivity.navController?.navigate(WelcomeFragmentDirections.actionSignin())
+            Navigation.findNavController(it).navigate(WelcomeFragmentDirections.actionScanId("signin"))
         })
 
         signOut?.setOnClickListener({
-            MainActivity.navController?.navigate(WelcomeFragmentDirections.actionSignout())
+            Navigation.findNavController(it).navigate(WelcomeFragmentDirections.actionScanId("signout"))
         })
         return view
     }

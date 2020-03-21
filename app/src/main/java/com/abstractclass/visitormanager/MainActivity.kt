@@ -10,7 +10,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,13 +23,9 @@ class MainActivity : AppCompatActivity() {
 
         navController?.addOnDestinationChangedListener { controller, destination, arguments ->
             when (destination.id) {
-                R.id.signInFragment -> {
+                R.id.scanIdFragment -> {
                     navView.visibility = View.GONE
-                    toolbar?.navigationIcon = null
-                }
-                R.id.signOutFragment -> {
-                    navView.visibility = View.GONE
-                    toolbar?.navigationIcon = null
+                    toolbar.navigationIcon = null
                 }
                 else -> {
                     navView.visibility = View.VISIBLE

@@ -35,7 +35,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [IdDecodeInfoFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class IdDecodeInfoFragment : Fragment() {
+class AddVisitor : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -54,7 +54,7 @@ class IdDecodeInfoFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        person = arguments?.let { IdDecodeInfoFragmentArgs.fromBundle(it).person }
+        person = arguments?.let { AddVisitorArgs.fromBundle(it).person }
         visitor = Visitor()
 
     }
@@ -153,7 +153,7 @@ class IdDecodeInfoFragment : Fragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-                IdDecodeInfoFragment().apply {
+                AddVisitor().apply {
                     arguments = Bundle().apply {
                         putString(ARG_PARAM1, param1)
                         putString(ARG_PARAM2, param2)

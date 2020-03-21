@@ -1,5 +1,7 @@
 package com.abstractclass.visitormanager.text_recognition
 
+import android.annotation.SuppressLint
+
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.abstractclass.visitormanager.view_models.MRZViewModel
@@ -19,24 +21,25 @@ class MRZImangeAnalyzer(mrzViewModel: MRZViewModel?) : ImageAnalysis.Analyzer {
         else -> throw Exception("Rotation must be 0, 90, 180, or 270.")
     }
 
-    override fun analyze(imageProxy: ImageProxy?, rotationDegrees: Int) {
+    @SuppressLint("UnsafeExperimentalUsageError")
+    override fun analyze(imageProxy: ImageProxy) {
         val mediaImage = imageProxy?.image
-        val imageRotation = degreesToFirebaseRotation(rotationDegrees)
+        val imageRotation = degreesToFirebaseRotation(imageProxy?.imageInfo.rotationDegrees)
         if (mediaImage != null) {
             val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
             // Pass image to an ML Kit Vision API
             val result = detector.processImage(image)
-                .addOnSuccessListener { firebaseVisionText ->
-                    for (block in firebaseVisionText.textBlocks) {
-                        val boundingBox = block.boundingBox
-                        val cornerPoints = block.cornerPoints
-                        boundingBox?.set(1, 1, 1,1)
-                        mrzViewModel?.setTextblock(block.text)
+                    .addOnSuccessListener { firebaseVisionText ->
+                        for (block in firebaseVisionText.textBlocks) {
+                            val boundingBox = block.boundingBox
+                            val cornerPoints = block.cornerPoints
+                            boundingBox?.set(1, 1, 1,1)
+                            mrzViewModel?.setTextblock(block.text)
+                        }
                     }
-                }
-                .addOnFailureListener { e ->
-                    e.printStackTrace()
-                }
+                    .addOnFailureListener { e ->
+                        e.printStackTrace()
+                    }
         }
 
     }

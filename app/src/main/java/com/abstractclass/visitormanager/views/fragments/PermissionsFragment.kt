@@ -1,5 +1,6 @@
 package com.abstractclass.visitormanager.views.fragments
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,7 +23,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [PermissionFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PermissionFragment : Fragment() {
+class PermissionsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -33,6 +34,13 @@ class PermissionFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        if (!allPermissionsGranted(requireContext())) {
+            // Request camera-related permissions
+            requestPermissions(Globals.REQUIRED_PERMISSIONS, Globals.REQUEST_CODE_PERMISSIONS)
+        } else {
+            // If permissions have already been granted, proceed
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -41,24 +49,21 @@ class PermissionFragment : Fragment() {
         val view= inflater.inflate(R.layout.fragment_permission, container, false)
         return view
     }
+
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Globals.REQUEST_CODE_PERMISSIONS) {
-            if (!allPermissionsGranted()) {
-                Toast.makeText(this.context,
-                        "Permissions not granted by the user.",
-                        Toast.LENGTH_SHORT).show()
-                activity?.finish()
+            if (PackageManager.PERMISSION_GRANTED == grantResults.firstOrNull()) {
+                // Take the user to the success fragment when permission is granted
+                Toast.makeText(context, "Permission request granted", Toast.LENGTH_LONG).show()
+                Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack()
             } else {
-                Navigation.findNavController(getView()!!).popBackStack()
+                Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    private fun allPermissionsGranted() = Globals.REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-                requireContext(), it) == PackageManager.PERMISSION_GRANTED
-    }
 
     companion object {
         /**
@@ -72,11 +77,15 @@ class PermissionFragment : Fragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-                PermissionFragment().apply {
+                PermissionsFragment().apply {
                     arguments = Bundle().apply {
                         putString(ARG_PARAM1, param1)
                         putString(ARG_PARAM2, param2)
                     }
                 }
+
+        fun allPermissionsGranted(context : Context) = Globals.REQUIRED_PERMISSIONS.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
     }
 }
